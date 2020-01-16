@@ -1,0 +1,1 @@
+Progetto per l'esame di information retrieval con lo scopo di implementare una ricerca personalizzata sfruttando Elasticsearch.
