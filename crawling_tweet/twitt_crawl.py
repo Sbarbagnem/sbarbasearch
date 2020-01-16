@@ -45,11 +45,25 @@ def process_tweet(tweet, id):
 
 	return(temp_tweet)
 
-tweet_list = []
+def read_tweet_pre_downladed(filepath):
+	
+	# read and return json with tweet yet downloaded
+	with open(filepath) as json_file:
+		data = json.load(json_file)
+	
+	return data
+
 maxTweets = 10000 # Some arbitrary large number
 tweetsPerQry = 100  # this is the max the API permits
 fName = './tweet.json' # We'll store the tweets in a text file.
+tweet_list = read_tweet_pre_downladed(fName)
 
+print('Numero di tweet già salvati nel json: ', len(tweet_list))
+
+if len(tweet_list)==0:
+	id_tweet = 1
+else:
+	id_tweet = tweet_list[len(tweet_list) - 1]['id']
 
 searchQuery = "sport OR news OR music OR cinema OR technology OR religion OR war"
 
@@ -58,7 +72,7 @@ max_id = 0
 
 tweetCount = 0
 print('Downloading max {0} tweets'.format(maxTweets))
-id = 1
+
 # 45000 tweet every 15 minutes
 with open(fName, 'w') as f:
 	while tweetCount < maxTweets:
@@ -77,8 +91,8 @@ with open(fName, 'w') as f:
 				print("No more tweets found")
 				break
 			for tweet in new_tweets:
-				tweet_list.append(process_tweet(tweet,id))
-				id = id + 1
+				tweet_list.append(process_tweet(tweet,id_tweet))
+				id_tweet = id_tweet + 1
 				#json.dump(tweet_list, f, indent=3)
 
 			tweetCount = tweetCount + len(new_tweets)
@@ -91,8 +105,9 @@ with open(fName, 'w') as f:
 			break
 
 print('Found: ', len(tweet_list), ' tweets')
+print('Numero di tweet dopo averne scaricati altri: ', len(tweet_list))
 
-with open('./tweet.json', 'w') as outfile:
+with open(fName, 'w') as outfile:
 	json.dump(tweet_list, outfile, indent=3)
 
 # 2020 - 01 - 06

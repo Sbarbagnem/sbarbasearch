@@ -1,4 +1,4 @@
-mapping = {
+MAPPING = {
         "settings" : {
             "index" : {
                 "number_of_shards" : 1,
@@ -62,12 +62,14 @@ mapping = {
         }
     }
 
-analyzer = "analyzer": {
-                "custom_analyzer": {
-                    "type": "custom",
-                    "tokenizer": "whitespace",
-                    "filter":[
-                        "lowercase"
-                    ]
-                }
+ANALYZER = {
+    "analyzer": {
+        "custom_analyzer": {
+            "type": "custom",
+            "tokenizer": "whitespace",
+            "filter":[
+                "lowercase"
+            ]
+        }
+    }
 }
