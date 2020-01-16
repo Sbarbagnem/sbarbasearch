@@ -5,3 +5,4 @@
 * Provare a implementre query booleana (se nella query di ricerca sono presenti operatori booleani)
 * Capire come costruire profilo utente
 * Mettere la possibilità di ordinare i risultati in base a diversi fattori? (followers, like, retweet, data, score)
+* Guardare come usare word2vec e elasticsearch 
