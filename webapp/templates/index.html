@@ -4,7 +4,7 @@
   <style>
     #search-bar {
       display: flex;
-      margin: 20px 10px;
+      margin: 10% 10%;
     }
 
     #search-bar input {
@@ -70,28 +70,14 @@
 
   <form id="search-bar" action="/search">
     <input type="text" placeholder="Search.." name="search" value="{{ search_term }}">
+    <select name="number_result">
+      <option value="5" selected>5</option>
+      <option value="100">100</option>
+      <option value="200">200</option>
+      <option value="300">300</option>
+    </select>
     <button type="submit"><i class="fa fa-search">Search</i></button>
   </form>
-
-  <!--<div class="bulk-results">
-    {% for category, products in products_by_category %}
-      <div class="search">
-        <div class="search-header">
-          <a href="search?search={{category}}" class="search-term">"{{ category }}"</a>
-        </div>
-        <div class="search-results">
-          {% if tweets|length > 0 %}
-            <a href="/product/{{ product.id }}" class="product">
-              <img class="product-image" src="{{ product.image }}"/>
-              <div class="product-info">
-                <span>porco</span>
-              </div>
-            </a>
-          {% endif %}
-        </div>
-      </div>
-    {% endfor %}
-  </div>-->
 
   <div>
     {% if tweets|length > 0 %}

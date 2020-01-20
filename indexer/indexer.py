@@ -98,8 +98,11 @@ if __name__ == '__main__':
     PATH_TO_JSON_TWEET = '../crawling_tweet/tweet.json'
 
     if index_exist():
+        print('Esiste già l\'index')
         delete_index()
+        print('Index eliminato')
 
     create_index()
+    print('Index creato')
     write_tweet_on_index()
     print('index creato e popolato')

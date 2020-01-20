@@ -10,8 +10,17 @@ MAPPING = {
                         "type": "custom",
                         "tokenizer": "whitespace",
                         "filter": [
-                            "lowercase"
+                            "lowercase",
+                            "delete_link_end",
+                            "porter_stem"
                         ]
+                    }
+                },
+                "filter": {
+                    "delete_link_end": {
+                        "type": "pattern_replace",
+                        "pattern": "^https?:\/\/.*[\r\n]*",
+                        "replacement": ""
                     }
                 }
             }
