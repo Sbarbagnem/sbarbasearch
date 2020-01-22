@@ -1,14 +1,10 @@
 import tweepy
 import json
 import jsonpickle
-
-consumer_key = "EQa4iFjD2wXsvYnysJwwn3m3R"
-consumer_secret = "7uxYmpqUqNKr4Y1DCTSB0K3vEEWZ0lFNtmiQfovD954G81SUjL"
-access_token = "1217000526887489536-YY8izIFzPq7WQwBo8tD3LTsP9ZbFTR"
-access_token_secret = "nPQKtAIgjIZKOc01FIqKC3fOSr40SO3pkGOZDyRD9PHI8"
+from secret import CONSUMER_KEY, CONSUMER_SECRET
 
 # Creating the authentication object
-auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
+auth = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 # Setting your access token and secret
 
 # Creating the API object while passing in auth information
@@ -43,6 +39,8 @@ def process_tweet(tweet, id, topic):
 	temp_tweet['retweet'] = int(tweet.retweet_count)
 	temp_tweet['profile_image_url'] = tweet.user.profile_image_url_https
 	temp_tweet['tweet_url'] = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+	if tweet["place"] is not None:
+      temp_tweet["country"] = tweet["place"]["country_code"]
 	temp_tweet['topic'] = topic
 
 	return(temp_tweet)
@@ -115,7 +113,7 @@ if __name__ == '__main__':
 	else:
 		id_tweet = tweet_list[len(tweet_list) - 1]['id']
 
-	topics = ['sport', 'music', 'cinema', 'technology', 'religion', 'war', 'economy']
+	topics = ['sport', 'music', 'cinema', 'technology', 'politic', 'economy']
 
 	for topic in topics:
 		print('Cerco tweets per il topic: ', topic)
