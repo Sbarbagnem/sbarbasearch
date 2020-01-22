@@ -82,7 +82,8 @@ def index_batch(tweets):
             'like': tweet['like'],
             'retweet': tweet['retweet'],
             'profile_image': tweet['profile_image_url'],
-            'tweet_url': tweet['tweet_url']
+            'tweet_url': tweet['tweet_url'],
+            'topic': tweet['topic']
         }
         requests.append(request)
 

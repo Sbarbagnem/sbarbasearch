@@ -14,10 +14,12 @@ def search():
 
     query = request.args.get('search')
     count = request.args.get('number_result')
+    user = request.args.get('profile')
+    topic = request.args.get('topic')
 
     #print('Voglio trovare ', count, ' tweet')
 
-    res = query_search(query, count_result=count)
+    res = query_search(query, count_result=count, user=user, topic=topic)
 
     return render_template('index.html', tweets=res, search_term=query)
 

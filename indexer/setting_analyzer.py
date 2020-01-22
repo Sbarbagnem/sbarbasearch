@@ -66,6 +66,11 @@ MAPPING = {
                     "type": "keyword",
                     "index": False,
                     "store" : True
+                },
+                "topic": {
+                    "type": "keyword",
+                    "index": True,
+                    "store": True
                 }
             }
         }

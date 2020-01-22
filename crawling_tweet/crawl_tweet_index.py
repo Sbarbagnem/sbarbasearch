@@ -39,8 +39,8 @@ def process_tweet(tweet, id, topic):
 	temp_tweet['retweet'] = int(tweet.retweet_count)
 	temp_tweet['profile_image_url'] = tweet.user.profile_image_url_https
 	temp_tweet['tweet_url'] = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
-	if tweet["place"] is not None:
-      temp_tweet["country"] = tweet["place"]["country_code"]
+#	if tweet["place"] is not None:
+#      temp_tweet["country"] = tweet["place"]["country_code"]
 	temp_tweet['topic'] = topic
 
 	return(temp_tweet)
@@ -71,14 +71,14 @@ def crawl_tweet_for_topic(topic, id_tweet):
 		try:
 			if (max_id <= 0):
 				if (not sinceId):
-					new_tweets = api.search(q=searchQuery, count=TWEET_FOR_QUERY, tweet_mode='extended', lang='en', result_type='mixed', since='2020-01-20', include_entities=False)
+					new_tweets = api.search(q=searchQuery, count=TWEET_FOR_QUERY, tweet_mode='extended', lang='en', result_type='mixed', since='2020-01-22', include_entities=False)
 				else:
-					new_tweets = api.search(q=searchQuery, count=TWEET_FOR_QUERY, tweet_mode='extended', lang='en', result_type='mixed', since='2020-01-20', include_entities=False, since_id=sinceId)
+					new_tweets = api.search(q=searchQuery, count=TWEET_FOR_QUERY, tweet_mode='extended', lang='en', result_type='mixed', since='2020-01-22', include_entities=False, since_id=sinceId)
 			else:
 				if (not sinceId):
-					new_tweets = api.search(q=searchQuery, count=TWEET_FOR_QUERY, tweet_mode='extended', lang='en', result_type='mixed', since='2020-01-20', include_entities=False, max_id=str(max_id - 1))
+					new_tweets = api.search(q=searchQuery, count=TWEET_FOR_QUERY, tweet_mode='extended', lang='en', result_type='mixed', since='2020-01-22', include_entities=False, max_id=str(max_id - 1))
 				else:
-					new_tweets = api.search(q=searchQuery, count=TWEET_FOR_QUERY, tweet_mode='extended', lang='en', result_type='mixed', since='2020-01-20', include_entities=False, max_id=str(max_id - 1), since_id=sinceId)
+					new_tweets = api.search(q=searchQuery, count=TWEET_FOR_QUERY, tweet_mode='extended', lang='en', result_type='mixed', since='2020-01-22', include_entities=False, max_id=str(max_id - 1), since_id=sinceId)
 			if not new_tweets:
 				print("No more tweets found")
 				break
@@ -99,9 +99,9 @@ def crawl_tweet_for_topic(topic, id_tweet):
 
 if __name__ == '__main__':
 
-	MAX_TWEETS = 150000 # Some arbitrary large number
+	MAX_TWEETS = 50000 # Some arbitrary large number
 	TWEET_FOR_QUERY = 100  # this is the max the API permits
-	FILE_TWEETS = './tweet_prova.json' # We'll store the tweets in a JSON file.
+	FILE_TWEETS = './tweet.json' # We'll store the tweets in a JSON file.
 
 	tweet_list = read_tweet_pre_downladed(FILE_TWEETS)
 

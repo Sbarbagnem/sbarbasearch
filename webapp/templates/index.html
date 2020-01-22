@@ -76,6 +76,30 @@
       <option value="200">200</option>
       <option value="300">300</option>
     </select>
+    <select name="profile">
+      <option value="None" selected>None</option>
+      <option value="AaronDonald97">Aaron Donald</option>
+      <option value="BorisJonson">Boris Jonson</option>
+      <option value="elonmusk">Elon Musk</option>
+      <option value="EmmaWatson">Emma Watson</option>
+      <option value="GreenDay">Green Day</option>
+      <option value="IBM">IBM</option>
+      <option value="JosephEStiglitz">Joseph Stiglitz</option>
+      <option value="MarcusRashford">Marcus Rashford</option>
+      <option value="MartinGarrix">Martin Garrix</option>
+      <option value="realDonaldTrump">Donald Trump</option>
+      <option value="vindiesel">Vin Diesel</option>
+      <option value="Yunus_Centre">Yunus Centre</option>
+    </select>
+    <select name="topic">
+      <option value="None" selected>None</option>
+      <option value="sport">sport</option>
+      <option value="music">music</option>
+      <option value="cinema">cinema</option>
+      <option value="technology">technology</option>
+      <option value="politic">politic</option>
+      <option value="economy">economy</option>
+    </select>
     <button type="submit"><i class="fa fa-search">Search</i></button>
   </form>
 
@@ -84,6 +108,7 @@
         {% for tweet in tweets%}
             <div>
                 <p3>{{tweet._source.user}}</p3>
+                <p3>{{tweet._source.topic}}</p3>
                 <p>{{tweet._source.text}}</p>
                 <a href="{{tweet._source.tweet_url}}">Link a tweet</a>
                 <img src="{{tweet._source.profile_image}}">
