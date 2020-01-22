@@ -1,4 +1,5 @@
 *.csv
-*.json
+tweet_*.json
+user_profile.json
 .DS_Store
 .vscode
