@@ -14,7 +14,9 @@ def search():
 
     query = request.args.get('search')
     count = request.args.get('number_result')
+    # se settato aggiungo bow del profilo alla query
     user = request.args.get('profile')
+    # se settato cerco solo nei tweet con quello specifico tweet
     topic = request.args.get('topic')
 
     #print('Voglio trovare ', count, ' tweet')

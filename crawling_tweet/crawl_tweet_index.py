@@ -61,8 +61,11 @@ def crawl_tweet_for_topic(topic, id_tweet):
 	print('Inizio crawl per il topic: ', topic)
 
 	searchQuery = topic
+
+	# servono per tenere traccia del punto in cui si è arrivati
 	sinceId = None
 	max_id = 0
+	
 	tweet_list = []
 	tweetCount = 0
 	id_tweet = id_tweet
@@ -103,10 +106,12 @@ if __name__ == '__main__':
 	TWEET_FOR_QUERY = 100  # this is the max the API permits
 	FILE_TWEETS = './tweet.json' # We'll store the tweets in a JSON file.
 
+	# leggo se nel json sono già presenti dei tweet
 	tweet_list = read_tweet_pre_downladed(FILE_TWEETS)
 
 	print('Numero di tweet già salvati nel json: ', len(tweet_list))
 
+	# se presenti dei tweet prendo ultimo id, in index serve id univoco
 	if len(tweet_list)==0:
 		id_tweet = 1
 		tweet_list = []
@@ -115,6 +120,7 @@ if __name__ == '__main__':
 
 	topics = ['sport', 'music', 'cinema', 'technology', 'politic', 'economy']
 
+	# per ogni topic scarico MAX_TWEETS tweet e creo lista di oggetti tweet 
 	for topic in topics:
 		print('Cerco tweets per il topic: ', topic)
 		last_id, temp_list = crawl_tweet_for_topic(topic, id_tweet)

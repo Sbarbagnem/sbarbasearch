@@ -12,6 +12,8 @@ def processing_tweet(sentence):
     return p.text
 
 def word_count(str):
+    # frequenza parole in tweet
+    
     counts = dict()
     words = str.split()
 

@@ -4,6 +4,9 @@ import jsonpickle
 from secret import CONSUMER_KEY, CONSUMER_SECRET
 
 def crawl_tweet_for_user(user):
+    '''
+        scarico ultimi 20 tweet di user
+    '''
 
     tweets = []
 
@@ -12,6 +15,8 @@ def crawl_tweet_for_user(user):
     #print(tweets_list)
 
     for tweet in tweets_list:
+
+        # tengo solo testo del tweet
         tweets.append(tweet.full_text)
 
     return tweets
@@ -31,8 +36,10 @@ if __name__ == '__main__':
     # two real user for every topic
     list_user = ['@MarcusRashford','@AaronDonald97', '@GreenDay', '@MartinGarrix', '@EmmaWatson', '@vindiesel', '@elonmusk', '@IBM', '@realDonaldTrump', '@BorisJohnson', '@Yunus_Centre', '@JosephEStiglitz']
 
+    # per ogni utente nella list_user scarico gli utlimi 20 tweet publicati
     for user in list_user:
         print('Scarico tweet di ', user)
         tweets = crawl_tweet_for_user(user)
         #print(tweets)
+        # salvo tweet in json user.json
         save_tweer_for_user(user, tweets)
