@@ -3,19 +3,23 @@ from elasticsearch.helpers import bulk
 import json
 from setting_analyzer import MAPPING
 
+
 def index_exist():
     return client.indices.exists(index=NAME_INDEX)
+
 
 def delete_index():
     client.indices.delete(index=NAME_INDEX)
 
+
 def read_tweet_pre_downladed(filepath):
-	
-	# read and return json with tweet yet downloaded
-	with open(filepath) as json_file:
-		data = json.load(json_file)
-	
-	return data
+
+    # read and return json with tweet yet downloaded
+    with open(filepath) as json_file:
+        data = json.load(json_file)
+
+    return data
+
 
 def create_index():
 
@@ -24,23 +28,22 @@ def create_index():
     response = client.indices.create(
         index="index_twitter",
         body=MAPPING,
-        ignore=400 # ignore 400 already exists code
+        ignore=400,  # ignore 400 already exists code
     )
 
-    if 'acknowledged' in response:
-        if response['acknowledged'] == True:
-            print ("INDEX MAPPING SUCCESS FOR INDEX:", response['index'])
+    if "acknowledged" in response:
+        if response["acknowledged"] == True:
+            print("INDEX MAPPING SUCCESS FOR INDEX:", response["index"])
 
     # catch API error response
-    elif 'error' in response:
-        print ("ERROR:", response['error']['root_cause'])
-        print ("TYPE:", response['error']['type'])
+    elif "error" in response:
+        print("ERROR:", response["error"]["root_cause"])
+        print("TYPE:", response["error"]["type"])
 
     # print out the response:
-    print ('\nresponse:', response)
+    print("\nresponse:", response)
 
 
-  
 def write_tweet_on_index():
     # read tweet.json and add every tweet to index
 
@@ -65,45 +68,49 @@ def write_tweet_on_index():
 
     client.indices.refresh(index=NAME_INDEX)
 
+
 def index_batch(tweets):
 
     requests = []
 
     for tweet in tweets:
         request = {
-            '_op_type': 'index',
-            '_index': 'index_twitter',
+            "_op_type": "index",
+            "_index": "index_twitter",
             #'_type': 'tweet',
-            '_id': tweet['id'],
-            'created_at': tweet['created_at'],
-            'text': tweet['text'],
-            'user': tweet['name_user'],
-            'followers_count': tweet['followers_count'],
-            'like': tweet['like'],
-            'retweet': tweet['retweet'],
-            'profile_image': tweet['profile_image_url'],
-            'tweet_url': tweet['tweet_url'],
-            'topic': tweet['topic']
+            "_id": tweet["id"],
+            "created_at": tweet["created_at"],
+            "text": tweet["text"],
+            "user": tweet["name_user"],
+            "followers_count": tweet["followers_count"],
+            "like": tweet["like"],
+            "retweet": tweet["retweet"],
+            "profile_image": tweet["profile_image_url"],
+            "tweet_url": tweet["tweet_url"],
+            "topic": tweet["topic"],
         }
         requests.append(request)
 
-    bulk(client, requests, chunk_size=len(requests), request_timeout=600, stats_only=True)
+    bulk(
+        client, requests, chunk_size=len(requests), request_timeout=600, stats_only=True
+    )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
 
     client = Elasticsearch(hosts=["localhost"])
 
-    NAME_INDEX = 'index_twitter'
+    NAME_INDEX = "index_twitter"
     # batch to upload n tweet for bulk
     BATCH = 10000
-    PATH_TO_JSON_TWEET = '../crawling_tweet/tweet.json'
+    PATH_TO_JSON_TWEET = "../crawling_tweet/tweet.json"
 
     if index_exist():
-        print('Esiste già l\'index')
+        print("Esiste già l'index")
         delete_index()
-        print('Index eliminato')
+        print("Index eliminato")
 
     create_index()
-    print('Index creato')
+    print("Index creato")
     write_tweet_on_index()
-    print('index creato e popolato')
+    print("index creato e popolato")
