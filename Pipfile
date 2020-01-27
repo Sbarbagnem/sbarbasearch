@@ -12,6 +12,7 @@ elasticsearch = "*"
 tweepy = "*"
 flask = "*"
 nltk = "*"
+gensim = "*"
 
 [requires]
 python_version = "3.7"

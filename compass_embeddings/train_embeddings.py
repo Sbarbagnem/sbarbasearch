@@ -1,210 +1,43 @@
 import os
-import re
-import json
-import numpy as np
-import gensim
-import argparse
-import itertools
-import multiprocessing as mp
-from gensim.models import Word2Vec, FastText
-from pandas import pandas as pd
+from twec.twec import TWEC
+from gensim.models.word2vec import Word2Vec
 
-from utils import preprocess
-from utils import parse_content_line
+list_user = [
+    "@MarcusRashford",
+    "@AaronDonald97",
+    "@GreenDay",
+    "@MartinGarrix",
+    "@EmmaWatson",
+    "@VancityReynolds",
+    "@elonmusk",
+    "@IBM",
+    "@realDonaldTrump",
+    "@BorisJohnson",
+    "@Yunus_Centre",
+    "@JosephEStiglitz",
+]
 
-import logging  # Setting up the loggings to monitor gensim
-
-logging.basicConfig(
-    format="%(levelname)s - %(asctime)s: %(message)s",
-    datefmt="%H:%M:%S",
-    level=logging.INFO,
-)
-
-parser = argparse.ArgumentParser(description="Train Word2Vec model")
-parser.add_argument(
-    "--dataset-path",
-    type=str,
-    help="path to dataset",
-    default="./dataset/computers/train/computers_splitted_train_xlarge.json",
-)
-parser.add_argument(
-    "--preprocess-method", type=str, help="nltk or spacy preprocess", default="spacy",
-)
-parser.add_argument(
-    "--embed-algorithm",
-    type=int,
-    help="training algorithm: CBOW (0) or SKIPGRAM (1)",
-    default=1,
-)
-args = parser.parse_args()
-preprocess_method = args.preprocess_method
-
-attrs = ["title"]
-attributes = [attr + "_left" for attr in attrs] + [attr + "_right" for attr in attrs]
-print("* LOADING DATASET")
-dataset = np.concatenate(
-    [
-        parse_content_line(x, attributes=attributes, label=0)
-        for x in open(args.dataset_path, "r").readlines()
-    ],
-    axis=0,
-).astype(object)
-print("* DONE")
-sentences = list(itertools.chain(*dataset))
-
-cores = mp.cpu_count() - 4  # Count the number of cores in a computer
-print("* PREPROCESS")
-# Preprocess text
-if preprocess_method == "spacy":
-    # Load spacy for tokenizing text
-    nlp = spacy.load("en_core_web_sm", disable=["ner", "parser"])
-    txt = [
-        preprocess(doc, method=preprocess_method)
-        for doc in nlp.pipe(sentences, batch_size=5000, n_threads=cores)
-    ]
-elif preprocess_method == "nltk":
-    with mp.Pool(processes=cores) as pool:
-        for attr in range(len(attributes)):
-            txt = pool.map(preprocess, sentences)
-print("* DONE")
-
-# Remove duplicates
-cleaned_sentences = pd.DataFrame({"sentences": txt})
-cleaned_sentences = cleaned_sentences.dropna().drop_duplicates()
-
-# Prepare sentences for w2v/fasttext training
-sentences = [row.split() for row in cleaned_sentences["sentences"]]
-
-# Train W2V or FastText
-print("* TRAIN EMBEDDINGS")
-size = 150
-min_count = 1
-context_window = 9
-epochs = 300
-algorithm = "w2v"
-if algorithm == "w2v":
-    model = Word2Vec(
-        sg=args.embed_algorithm,  #  Use SKIPGRAM model
-        hs=0,  # Don't use hierarchical softmax
-        min_count=min_count,  # All words that have an absolute frequency < 20 will be discarded
-        window=context_window,  # Context-window size
-        size=size,  # Embeddings dimension
-        sample=1e-5,
-        alpha=0.03,
-        min_alpha=0.0007,
-        negative=10,  # How many negative samples will be sampled for each positive example
-        workers=cores - 1,
-        compute_loss=True,
-    )
-elif algorithm == "fasttext":
-    model = FastText(
-        sg=args.embed_algorithm,  #  Use SKIPGRAM model
-        hs=0,  # Don't use hierarchical softmax
-        min_count=min_count,  # All words that have an absolute frequency < 20 will be discarded
-        window=context_window,  # Context-window size
-        size=size,  # Embeddings dimension
-        sample=1e-5,
-        alpha=0.03,
-        min_alpha=0.0007,
-        negative=10,  # How many negative samples will be sampled for each positive example
-        workers=cores - 1,
-        word_ngrams=1,
-        min_n=3,
-        max_n=6,
-    )
-
-model.build_vocab(sentences, progress_per=10000)
-model.train(sentences, total_examples=model.corpus_count, epochs=epochs, report_delay=1)
-print("* DONE")
-
-if algorithm == "w2v":
-    sentences_dict = {}
-    with open(
-        "./dataset/embeddings/w2v/w2v_"
-        + "_".join(attrs)
-        + "_"
-        + str(epochs)
-        + "Epochs_"
-        + str(context_window)
-        + "ContextWindow_"
-        + str(min_count)
-        + "MinCount_"
-        + str(size)
-        + "d.txt",
-        "w",
-    ) as f:
-        for sentence in sentences:
-            for token in sentence:
-                try:
-                    sentences_dict[token]
-                except KeyError:
-                    sentences_dict[token] = 1
-                    if token in model.wv.vocab:
-                        f.write(
-                            token
-                            + " "
-                            + " ".join(str(x) for x in model.wv.get_vector(token))
-                        )
-                        f.write("\n")
-        f.flush()
-        f.close()
-    model.wv.save_word2vec_format(
-        "./dataset/embeddings/w2v/w2v_"
-        + "_".join(attrs)
-        + "_"
-        + str(epochs)
-        + "Epochs_"
-        + str(context_window)
-        + "ContextWindow_"
-        + str(min_count)
-        + "MinCount_"
-        + str(size)
-        + "d.bin",
-        binary=True,
-    )
-elif algorithm == "fasttext":
-    sentences_dict = {}
-    with open(
-        "./dataset/embeddings/fasttext/fasttext_"
-        + "_".join(attrs)
-        + "_"
-        + str(epochs)
-        + "Epochs_"
-        + str(context_window)
-        + "ContextWindow_"
-        + str(min_count)
-        + "MinCount_"
-        + str(size)
-        + "d.txt",
-        "w",
-    ) as f:
-        for sentence in sentences:
-            for token in sentence:
-                try:
-                    sentences_dict[token]
-                except KeyError:
-                    sentences_dict[token] = 1
-                    try:
-                        f.write(
-                            token
-                            + " "
-                            + " ".join(str(x) for x in model.wv.get_vector(token))
-                        )
-                        f.write("\n")
-                    except KeyError:
-                        continue
-        f.flush()
-        f.close()
-    model.wv.save(
-        "./dataset/embeddings/fasttext/fasttext_"
-        + "_".join(attrs)
-        + "_"
-        + str(epochs)
-        + "Epochs_"
-        + str(context_window)
-        + "ContextWindow_"
-        + str(min_count)
-        + "MinCount_"
-        + str(size)
-        + "d.bin"
-    )
+"""
+:param size: Number of dimensions. Default is 100.
+:param sg: Neural architecture of Word2vec. Default is CBOW (). If 1, Skip-gram is employed.
+:param siter: Number of static iterations (epochs). Default is 5.
+:param diter: Number of dynamic iterations (epochs). Default is 5.
+:param ns: Number of negative sampling examples. Default is 10, min is 1.
+:param window: Size of the context window (left and right). Default is 5 (5 left + 5 right).
+:param alpha: Initial learning rate. Default is 0.025.
+:param min_count: Min frequency for words over the entire corpus. Default is 5.
+:param workers: Number of worker threads. Default is 2.
+:param test: Folder name of the diachronic corpus files for testing.
+:param opath: Name of the desired output folder. Default is model.
+:param init_mode: If \"hidden\" (default), initialize temporal models with hidden embeddings of the context;'
+                    'if \"both\", initilize also the word embeddings;'
+                    'if \"copy\", temporal models are initiliazed as a copy of the context model
+                    (same vocabulary)
+"""
+aligner = TWEC(size=50, sg=1, siter=30, diter=30, workers=6)
+aligner.train_compass(
+    os.path.join(".", "data", "compass.txt"), overwrite=False
+)  # keep an eye on the overwrite behaviour
+aligner.train_slice(os.path.join(".", "data", "query_tweets.txt"), save=True)
+for user in list_user:
+    aligner.train_slice(os.path.join(".", "data", user + "_tweets.txt"), save=True)

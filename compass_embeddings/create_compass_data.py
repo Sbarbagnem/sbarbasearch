@@ -81,8 +81,7 @@ if __name__ == "__main__":
         with open(os.path.join(".", "data", user + "_tweets.txt"), "w+") as f:
             f.write(user_tweet)
         print("* DONE. EXPRIRED TIME: ", time.time() - init)
-    
+
     with open(os.path.join(".", "data", "compass.txt"), "w+") as f:
         f.write(compass)
 
-    
