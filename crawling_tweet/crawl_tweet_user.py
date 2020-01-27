@@ -1,9 +1,10 @@
-import tweepy
+import os
 import json
+import tweepy
 from secret import CONSUMER_KEY, CONSUMER_SECRET
 
 
-def crawl_tweet_for_user_no_limits(user, count=200):
+def crawl_tweet_for_user_no_limits(user, count=200, update=True):
 
     # initialize a list to hold all the tweepy Tweets
     alltweets = []
@@ -42,9 +43,13 @@ def crawl_tweet_for_user_no_limits(user, count=200):
 
     # print(tweets_list)
     tweets = []
+    if update:
+        user_path = os.path.join("..", "user_profile", "data", user + ".json")
+        tweets = json.load(open(user_path, "rb"))
     for tweet in alltweets:
         # tengo solo testo del tweet
-        tweets.append(tweet.full_text)
+        if tweet.full_text not in tweets:
+            tweets.append(tweet.full_text)
     return tweets
 
 
@@ -80,26 +85,25 @@ if __name__ == "__main__":
     PATH_JSON_TWEET_FOR_USER = "./tweet_for_user.json"
 
     # two real user for every topic
-    # list_user = [
-    #     "@MarcusRashford",
-    #     "@AaronDonald97",
-    #     "@GreenDay",
-    #     "@MartinGarrix",
-    #     "@EmmaWatson",
-    #     "@vindiesel",
-    #     "@elonmusk",
-    #     "@IBM",
-    #     "@realDonaldTrump",
-    #     "@BorisJohnson",
-    #     "@Yunus_Centre",
-    #     "@JosephEStiglitz",
-    # ]
-    list_user = ['@VancityReynolds']
+    list_user = [
+        "@MarcusRashford",
+        "@AaronDonald97",
+        "@GreenDay",
+        "@MartinGarrix",
+        "@EmmaWatson",
+        "@VancityReynolds",
+        "@elonmusk",
+        "@IBM",
+        "@realDonaldTrump",
+        "@BorisJohnson",
+        "@Yunus_Centre",
+        "@JosephEStiglitz",
+    ]
 
-    # per ogni utente nella list_user scarico gli utlimi 20 tweet publicati
+    # per ogni utente nella list_user scarico gli utlimi tweet publicati
     for user in list_user:
         print("Scarico tweet di ", user)
-        tweets = crawl_tweet_for_user_no_limits(user, 10000)
+        tweets = crawl_tweet_for_user_no_limits(user, count=10000, update=True)
         # print(tweets)
         # salvo tweet in json user.json
         save_tweer_for_user(user, tweets)
