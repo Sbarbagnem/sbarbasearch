@@ -1,6 +1,7 @@
 import os
 import json
 import tweepy
+from config import USERS_LIST
 from secret import CONSUMER_KEY, CONSUMER_SECRET
 
 
@@ -82,24 +83,8 @@ if __name__ == "__main__":
 
     PATH_JSON_TWEET_FOR_USER = "./tweet_for_user.json"
 
-    # two real user for every topic
-    list_user = [
-        "@MarcusRashford",
-        "@AaronDonald97",
-        "@GreenDay",
-        "@MartinGarrix",
-        "@EmmaWatson",
-        "@VancityReynolds",
-        "@elonmusk",
-        "@IBM",
-        "@realDonaldTrump",
-        "@BorisJohnson",
-        "@Yunus_Centre",
-        "@JosephEStiglitz",
-    ]
-
-    # per ogni utente nella list_user scarico gli utlimi tweet publicati
-    for user in list_user:
+    # per ogni utente nella USERS_LIST scarico gli utlimi tweet publicati
+    for user in USERS_LIST:
         print("Scarico tweet di ", user)
         tweets = crawl_tweet_for_user_no_limits(user, count=10000, update=False)
         # print(tweets)

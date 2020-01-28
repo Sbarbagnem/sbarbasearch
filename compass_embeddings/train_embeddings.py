@@ -1,21 +1,7 @@
 import os
 from twec.twec import TWEC
 from gensim.models.word2vec import Word2Vec
-
-list_user = [
-    "@MarcusRashford",
-    "@AaronDonald97",
-    "@GreenDay",
-    "@MartinGarrix",
-    "@EmmaWatson",
-    "@VancityReynolds",
-    "@elonmusk",
-    "@IBM",
-    "@realDonaldTrump",
-    "@BorisJohnson",
-    "@Yunus_Centre",
-    "@JosephEStiglitz",
-]
+from config import USERS_LIST
 
 """
 :param size: Number of dimensions. Default is 100.
@@ -39,5 +25,5 @@ aligner.train_compass(
     os.path.join(".", "data", "compass.txt"), overwrite=True
 )  # keep an eye on the overwrite behaviour
 aligner.train_slice(os.path.join(".", "data", "query_tweets.txt"), save=True)
-for user in list_user:
+for user in USERS_LIST:
     aligner.train_slice(os.path.join(".", "data", user + "_tweets.txt"), save=True)

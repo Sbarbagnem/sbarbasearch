@@ -1,8 +1,11 @@
-import string
-
+import re
+import html
 import nltk
+import string
+from tqdm import tqdm
 from nltk.corpus import stopwords
-from nltk import re
+
+english_stopwords = set(stopwords.words("english"))
 
 MIN_YEAR = 1900
 MAX_YEAR = 2100
@@ -1242,14 +1245,84 @@ def is_year(text):
         return False
 
 
+def get_full_url_pattern():
+    return re.compile(
+        # u"^"
+        # protocol identifier
+        u"(?:(?:(?:https?|ftp):)?//)"
+        # user:pass authentication
+        u"(?:\S+(?::\S*)?@)?" u"(?:"
+        # IP address exclusion
+        # private & local networks
+        u"(?!(?:10|127)(?:\.\d{1,3}){3})"
+        u"(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})"
+        u"(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})"
+        # IP address dotted notation octets
+        # excludes loopback network 0.0.0.0
+        # excludes reserved space >= 224.0.0.0
+        # excludes network & broadcast addresses
+        # (first & last IP address of each class)
+        u"(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])"
+        u"(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}"
+        u"(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))"
+        u"|"
+        # host & domain names, may end with dot
+        # can be replaced by a shortest alternative
+        # u"(?![-_])(?:[-\w\u00a1-\uffff]{0,63}[^-_]\.)+"
+        # u"(?:(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)"
+        # # domain name
+        # u"(?:\.(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)*"
+        u"(?:"
+        u"(?:"
+        u"[a-z0-9\u00a1-\uffff]"
+        u"[a-z0-9\u00a1-\uffff_-]{0,62}"
+        u")?"
+        u"[a-z0-9\u00a1-\uffff]\."
+        u")+"
+        # TLD identifier name, may end with dot
+        u"(?:[a-z\u00a1-\uffff]{2,}\.?)" u")"
+        # port number (optional)
+        u"(?::\d{2,5})?"
+        # resource path (optional)
+        u"(?:[/?#]\S*)?"
+        # u"$",
+        ,
+        flags=re.I,
+    )
+
+
+def get_uppercase_pattern():
+    return re.compile(r"[a-z]+|[A-Z][a-z]+|\d+|[A-Z]+(?![a-z])")
+
+
+def get_non_alphanum_pattern():
+    return re.compile(r"\W+")  # Match everything that is not contained in [a-zA-Z0-9_]
+
+
+def split_by_capital_letter(m: re.Match):
+    return " ".join(get_uppercase_pattern().findall(m.group(1)))
+
+
 class TwitterPreprocessor:
     def __init__(self, text: str):
         self.text = text
+        self.blank_spaces_pattern = get_blank_spaces_pattern()
+        self.emojis_pattern = get_emojis_pattern()
+        self.full_url_pattern = get_full_url_pattern()
+        self.hashtags_pattern = get_hashtags_pattern()
+        self.mentions_pattern = get_mentions_pattern()
+        self.negations_pattern = get_negations_pattern()
+        self.non_alphanum_pattern = get_non_alphanum_pattern()
+        self.single_letter_words_pattern = get_single_letter_words_pattern()
+        self.twitter_reserved_words_pattern = get_twitter_reserved_words_pattern()
+        self.uppercase_pattern = get_uppercase_pattern()
+        self.url_patern = get_url_patern()
 
     def fully_preprocess(self):
         return (
             self.remove_urls()
             .remove_mentions()
+            .remove_emojis()
             .remove_hashtags()
             .remove_twitter_reserved_words()
             .remove_punctuation()
@@ -1259,37 +1332,55 @@ class TwitterPreprocessor:
             .remove_numbers()
         )
 
-    def remove_urls(self):
-        self.text = re.sub(pattern=get_url_patern(), repl="", string=self.text)
+    def remove_urls(self, full=True):
+        if full:
+            self.text = re.sub(
+                pattern=self.full_url_pattern, repl=" ", string=self.text
+            )
+        else:
+            self.text = re.sub(pattern=self.url_patern, repl=" ", string=self.text)
         return self
 
     def remove_punctuation(self):
         self.text = self.text.translate(str.maketrans("", "", string.punctuation))
         return self
 
-    def remove_mentions(self):
-        self.text = re.sub(pattern=get_mentions_pattern(), repl="", string=self.text)
+    def remove_emojis(self):
+        self.text = re.sub(pattern=self.emojis_pattern, repl=" ", string=self.text)
         return self
 
-    def remove_hashtags(self):
-        self.text = re.sub(pattern=get_hashtags_pattern(), repl="", string=self.text)
+    def remove_mentions(self):
+        self.text = re.sub(pattern=self.mentions_pattern, repl=" ", string=self.text)
+        return self
+
+    def remove_hashtags(self, split_capital_letter=True):
+        if split_by_capital_letter:
+            self.text = re.sub(
+                pattern=self.hashtags_pattern,
+                repl=split_by_capital_letter,
+                string=self.text,
+            )
+        else:
+            self.text = re.sub(
+                pattern=self.hashtags_pattern, repl=" ", string=self.text
+            )
         return self
 
     def remove_twitter_reserved_words(self):
         self.text = re.sub(
-            pattern=get_twitter_reserved_words_pattern(), repl="", string=self.text
+            pattern=self.twitter_reserved_words_pattern, repl=" ", string=self.text
         )
         return self
 
     def remove_single_letter_words(self):
         self.text = re.sub(
-            pattern=get_single_letter_words_pattern(), repl="", string=self.text
+            pattern=self.single_letter_words_pattern, repl=" ", string=self.text
         )
         return self
 
     def remove_blank_spaces(self):
         self.text = re.sub(
-            pattern=get_blank_spaces_pattern(), repl=" ", string=self.text
+            pattern=self.blank_spaces_pattern, repl=" ", string=self.text
         )
         return self
 
@@ -1324,5 +1415,5 @@ class TwitterPreprocessor:
         return self
 
     def handle_negations(self):
-        self.text = re.sub(pattern=get_negations_pattern(), repl="", string=self.text)
+        self.text = re.sub(pattern=self.negations_pattern, repl=" ", string=self.text)
         return self
