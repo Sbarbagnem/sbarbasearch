@@ -1,7 +1,7 @@
 import tweepy
 import json
 import jsonpickle
-from secret import CONSUMER_KEY, CONSUMER_SECRET
+from config import CONSUMER_KEY, CONSUMER_SECRET
 
 # Creating the authentication object
 auth = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)

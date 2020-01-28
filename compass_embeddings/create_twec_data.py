@@ -70,8 +70,8 @@ if __name__ == "__main__":
     for user in USERS_LIST:
         user_tweets[user] = json.load(
             open(os.path.join("user_profile", "data", user + ".json"))
-        )
-    
+        ).values()
+
     if not os.path.exists('./data'):
         os.makedirs('./data')
 

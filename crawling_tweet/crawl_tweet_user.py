@@ -1,8 +1,7 @@
 import os
 import json
 import tweepy
-from config import USERS_LIST
-from secret import CONSUMER_KEY, CONSUMER_SECRET
+from config import USERS_LIST, CONSUMER_KEY, CONSUMER_SECRET
 
 
 def crawl_tweet_for_user_no_limits(user, count=200, update=True):
@@ -46,7 +45,7 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=True):
     tweets = {}
 
     if update:
-        user_path = os.path.join("user_profile", "user_profile", "data", user + ".json")
+        user_path = os.path.join("user_profile", "data", user + ".json")
         tweets = json.load(open(user_path, "rb"))
 
     for tweet in alltweets:
@@ -60,7 +59,7 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=True):
 
 def save_tweer_for_user(user, tweets):
 
-    with open(os.path.join("user_profile", "user_profile", "data", user + ".json"), "w") as outfile:
+    with open(os.path.join("user_profile", "data", user + ".json"), "w") as outfile:
         json.dump(tweets, outfile, indent=3)
 
 
