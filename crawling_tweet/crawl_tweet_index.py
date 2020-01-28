@@ -26,7 +26,6 @@ def process_tweet(tweet, id, topic):
 			profile_image_url_https
 			created_at
 	"""
-    tweets = []
     temp_tweet = {}
 
     temp_tweet["id"] = id

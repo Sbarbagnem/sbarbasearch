@@ -47,9 +47,7 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=True):
         user_path = os.path.join("..", "user_profile", "data", user + ".json")
         tweets = json.load(open(user_path, "rb"))
     for tweet in alltweets:
-        # tengo solo testo del tweet
-        if tweet.full_text not in tweets:
-            tweets.append(tweet.full_text)
+        tweets.append(tweet.full_text)
     return tweets
 
 
@@ -103,7 +101,7 @@ if __name__ == "__main__":
     # per ogni utente nella list_user scarico gli utlimi tweet publicati
     for user in list_user:
         print("Scarico tweet di ", user)
-        tweets = crawl_tweet_for_user_no_limits(user, count=10000, update=True)
+        tweets = crawl_tweet_for_user_no_limits(user, count=10000, update=False)
         # print(tweets)
         # salvo tweet in json user.json
         save_tweer_for_user(user, tweets)

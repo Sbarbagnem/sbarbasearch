@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     for file in os.listdir(directory):
         filename = os.fsdecode(file)
-        if filename.endswith(".json"):
+        if filename.endswith(".json") and not filename.startswith('bow'):
             user = re.split("@|.json", filename)[1]
 
             with open(PATH_TWEET_FOR_USER + filename) as jsonfile:
