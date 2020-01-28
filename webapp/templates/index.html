@@ -1,82 +1,89 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <style>
-    #search-bar {
-      display: flex;
-      margin: 10% 10%;
-    }
+<!-- <style>
+  #search-bar {
+    display: flex;
+    margin: 10% 10%;
+  }
 
-    #search-bar input {
-      width: 100%;
-      padding: 10px;
-    }
+  #search-bar input {
+    width: 100%;
+    padding: 10px;
+  }
 
-    #search-bar button {
-      margin-left: 15px;
-    }
+  #search-bar button {
+    margin-left: 15px;
+  }
 
-    .bulk-results {
-      display: flex;
-      flex-wrap: wrap;
-    }
+  .bulk-results {
+    display: flex;
+    flex-wrap: wrap;
+  }
 
-    .search {
-      margin: 0px 10px 20px 10px;
-      padding: 20px;
-      background: #fafaff;
-    }
+  .search {
+    margin: 0px 10px 20px 10px;
+    padding: 20px;
+    background: #fafaff;
+  }
 
-    .search-header {
-      height: 40px;
-    }
+  .search-header {
+    height: 40px;
+  }
 
-    .search-term {
-      font-weight: bold;
-      color: #000;
-      text-decoration: none;
-    }
+  .search-term {
+    font-weight: bold;
+    color: #000;
+    text-decoration: none;
+  }
 
-    .search-results {
-      display: grid;
-      grid-template-columns: repeat(3, 100px);
-      grid-auto-rows: 150px;
-      grid-gap: 20px;
-    }
+  .search-results {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-auto-rows: 150px;
+    grid-gap: 20px;
+  }
 
-    .product {
-      display: block;
-      color: #333;
-      text-decoration: none;
-    }
+  .product {
+    display: block;
+    color: #333;
+    text-decoration: none;
+  }
 
-    .product-image {
-      max-width: 100px;
-      max-height: 100px;
-      margin-bottom: 10px;
-    }
+  .product-image {
+    max-width: 100px;
+    max-height: 100px;
+    margin-bottom: 10px;
+  }
 
-    .product-info {
-      height: 54px;
-      overflow: hidden;
-    }
+  .product-info {
+    height: 54px;
+    overflow: hidden;
+  }
 
-    .product-name {
-      font-size: 10px;
-      margin-right: 10px;
-    }
-  </style>
+  .product-name {
+    font-size: 10px;
+    margin-right: 10px;
+  }
+</style> -->
 
 
-  <form id="search-bar" action="/search">
-    <input type="text" placeholder="Search.." name="search" value="{{ search_term }}">
-    <select name="number_result">
+<form id="search-bar" action="/search">
+  <div class="form-group">
+    <input class="form-control" type="text" placeholder="Type your query here..." name="search" value="{{ search_term }}">
+  </div>
+  <div class="form-group">
+    <label for="results">How many results do you want?</label>
+    <select id="results" class="form-control" name="number_result">
       <option value="5" selected>5</option>
       <option value="100">100</option>
       <option value="200">200</option>
       <option value="300">300</option>
     </select>
-    <select name="profile">
+  </div>
+  <div class="form-group">
+    <label for="profile">Wanna a particular profile?</label>
+    <select id="profile" class="form-control" name="profile">
       <option value="None" selected>None</option>
       <option value="AaronDonald97">Aaron Donald</option>
       <option value="BorisJonson">Boris Jonson</option>
@@ -88,10 +95,13 @@
       <option value="MarcusRashford">Marcus Rashford</option>
       <option value="MartinGarrix">Martin Garrix</option>
       <option value="realDonaldTrump">Donald Trump</option>
-      <option value="vindiesel">Vin Diesel</option>
+      <option value="VancityReynolds">Rayan Reynolds</option>
       <option value="Yunus_Centre">Yunus Centre</option>
     </select>
-    <select name="topic">
+  </div>
+  <div class="form-group">
+    <label for="topic">Wanna select a specific topic?</label>
+    <select id="topic" class="form-control" name="topic">
       <option value="None" selected>None</option>
       <option value="sport">sport</option>
       <option value="music">music</option>
@@ -100,20 +110,34 @@
       <option value="politic">politic</option>
       <option value="economy">economy</option>
     </select>
-    <button type="submit"><i class="fa fa-search">Search</i></button>
-  </form>
-
-  <div>
-    {% if tweets|length > 0 %}
-        {% for tweet in tweets%}
-            <div>
-                <p3>{{tweet._source.user}}</p3>
-                <p3>{{tweet._source.topic}}</p3>
-                <p>{{tweet._source.text}}</p>
-                <a href="{{tweet._source.tweet_url}}">Link a tweet</a>
-                <img src="{{tweet._source.profile_image}}">
-            </div>
-        {% endfor %}
-    {% endif %}
   </div>
+  <div class="form-group">
+    <label for="method">Select the method to encapsulate a user profile</label>
+    <select id="method" class="form-control" name="method">
+      <option value="bow" selected>Bag of words</option>
+      <option value="embeddings">Embeddings</option>
+      <option value="embeddings_mean">Embeddings with mean</option>
+    </select>
+  </div>
+  <button class="btn btn-primary" type="submit"><i class="fa fa-search">Search</i></button>
+</form>
+
+<div>
+  {% if tweets|length > 0 %}
+  {% for tweet in tweets%}
+  <div class="row mb-3">
+    <div class="col-sm">
+      <img class="rounded-circle" src="{{tweet._source.profile_image}}"><br>
+      <p3>{{tweet._source.user}}</p3>
+    </div>
+    <div class="col-sm-10">
+      <!-- <p3>{{tweet._source.topic}}</p3> -->
+      <p3>{{tweet._source.text}}</p3>
+      <br>
+      <a href="{{tweet._source.tweet_url}}">Link to original tweet</a>
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>
 {% endblock %}

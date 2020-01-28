@@ -75,9 +75,10 @@ def query_search(query, count_result, user, topic, method):
                             )
                         ]
                     )
-                shoulds = sorted(shoulds, key=lambda x: x[1], reverse=True)[:10]
+                shoulds = sorted(shoulds, key=lambda x: x[1], reverse=True)
                 shoulds = [word for word, sim in shoulds]
-                should.append({"match": {"text": " ".join(list(set(shoulds)))}})
+                # Keep first 10 elements keeping order
+                should.append({"match": {"text": " ".join(list(dict.fromkeys(shoulds).keys())[:10])}})
 
     if topic != "None":
         must.append({"term": {"topic": topic}})

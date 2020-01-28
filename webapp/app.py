@@ -21,11 +21,12 @@ def search():
     user = request.args.get("profile")
     # se settato cerco solo nei tweet con quello specifico tweet
     topic = request.args.get("topic")
+    method = request.args.get("method")
 
     # print('Voglio trovare ', count, ' tweet')
 
     res = query_search(
-        query, count_result=count, user=user, topic=topic, method="embeddings"
+        query, count_result=count, user=user, topic=topic, method=method
     )
 
     return render_template("index.html", tweets=res, search_term=query)
