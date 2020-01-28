@@ -43,32 +43,20 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=True):
         print("...%s tweets downloaded so far" % (len(alltweets)))
 
     # print(tweets_list)
-    tweets = []
+    tweets = {}
+
     if update:
         user_path = os.path.join("..", "user_profile", "data", user + ".json")
         tweets = json.load(open(user_path, "rb"))
+
     for tweet in alltweets:
-        tweets.append(tweet.full_text)
-    return tweets
-
-
-def crawl_tweet_for_user(user, count=20):
-    """
-        scarico ultimi 20 tweet di user
-    """
-
-    tweets = []
-    tweets_list = api.user_timeline(
-        screen_name=user, count=count, tweet_mode="extended", include_entities=False
-    )
-
-    # print(tweets_list)
-    for tweet in tweets_list:
         # tengo solo testo del tweet
-        tweets.append(tweet.full_text)
+        if hasattr(tweet, 'retweeted_status'):
+            tweets[tweet.id_str] = tweet.retweeted_status.full_text
+        else:
+            tweets[tweet.id_str] = tweet.full_text
 
     return tweets
-
 
 def save_tweer_for_user(user, tweets):
 
