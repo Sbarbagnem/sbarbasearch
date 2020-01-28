@@ -92,6 +92,11 @@ MAPPING = {
                 "type": "keyword",
                 "index": True,
                 "store": True
+            },
+            "country": {
+                "type": "keyword",
+                "index": True,
+                "store": True
             }
         }
     }
