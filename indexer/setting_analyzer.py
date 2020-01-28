@@ -63,6 +63,10 @@ MAPPING = {
                 "store" : True,
                 "analyzer" : "standard"
             },
+            "popularity": {
+                "type": "rank_features"
+            },
+            '''
             "followers_count": {
                 "type": "integer",
                 "index": False,
@@ -78,6 +82,7 @@ MAPPING = {
                 "index": False,
                 "store" : True
             },
+            '''
             "profile_image": {
                 "type": "keyword",
                 "index": False,
@@ -89,6 +94,11 @@ MAPPING = {
                 "store" : True
             },
             "topic": {
+                "type": "keyword",
+                "index": True,
+                "store": True
+            },
+            "country": {
                 "type": "keyword",
                 "index": True,
                 "store": True
