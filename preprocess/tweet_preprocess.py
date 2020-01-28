@@ -1,5 +1,6 @@
 import re
 import html
+import emoji
 import nltk
 import string
 from tqdm import tqdm
@@ -1182,21 +1183,22 @@ def get_url_patern():
 
 
 def get_emojis_pattern():
-    try:
-        # UCS-4
-        emojis_pattern = re.compile(
-            u"([\U00002600-\U000027BF])|([\U0001f300-\U0001f64F])|([\U0001f680-\U0001f6FF])"
-        )
-    except re.error:
-        # UCS-2
-        emojis_pattern = re.compile(
-            u"([\u2600-\u27BF])|([\uD83C][\uDF00-\uDFFF])|([\uD83D][\uDC00-\uDE4F])|([\uD83D][\uDE80-\uDEFF])"
-        )
-    return emojis_pattern
+    # try:
+    #     # UCS-4
+    #     emojis_pattern = re.compile(
+    #         u"([\U00002600-\U000027BF])|([\U0001f300-\U0001f64F])|([\U0001f680-\U0001f6FF])"
+    #     )
+    # except re.error:
+    #     # UCS-2
+    #     emojis_pattern = re.compile(
+    #         u"([\u2600-\u27BF])|([\uD83C][\uDF00-\uDFFF])|([\uD83D][\uDC00-\uDE4F])|([\uD83D][\uDE80-\uDEFF])"
+    #     )
+    # return emojis_pattern
+    return emoji.get_emoji_regexp()
 
 
 def get_hashtags_pattern():
-    return re.compile(r"#\w*")
+    return re.compile(r"#(\w*)")
 
 
 def get_single_letter_words_pattern():
@@ -1303,7 +1305,7 @@ def split_by_capital_letter(m: re.Match):
     return " ".join(get_uppercase_pattern().findall(m.group(1)))
 
 
-class TwitterPreprocessor:
+class TweetPreprocess:
     def __init__(self, text: str):
         self.text = text
         self.blank_spaces_pattern = get_blank_spaces_pattern()

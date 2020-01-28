@@ -46,7 +46,7 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=True):
     tweets = {}
 
     if update:
-        user_path = os.path.join("..", "user_profile", "data", user + ".json")
+        user_path = os.path.join("user_profile", "user_profile", "data", user + ".json")
         tweets = json.load(open(user_path, "rb"))
 
     for tweet in alltweets:
@@ -60,7 +60,7 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=True):
 
 def save_tweer_for_user(user, tweets):
 
-    with open("../user_profile/data/" + user + ".json", "w") as outfile:
+    with open(os.path.join("user_profile", "user_profile", "data", user + ".json"), "w") as outfile:
         json.dump(tweets, outfile, indent=3)
 
 
@@ -68,8 +68,6 @@ if __name__ == "__main__":
 
     auth = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-
-    PATH_JSON_TWEET_FOR_USER = "./tweet_for_user.json"
 
     # per ogni utente nella USERS_LIST scarico gli utlimi tweet publicati
     for user in USERS_LIST:
