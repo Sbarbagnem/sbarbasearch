@@ -37,12 +37,10 @@ def process_tweet(tweet, id, topic):
     temp_tweet["like"] = int(tweet.favorite_count)
     temp_tweet["retweet"] = int(tweet.retweet_count)
     temp_tweet["profile_image_url"] = tweet.user.profile_image_url_https
-    temp_tweet[
-        "tweet_url"
-    ] = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
-    # 	if tweet["place"] is not None:
-    #      temp_tweet["country"] = tweet["place"]["country_code"]
-    temp_tweet["topic"] = topic
+    temp_tweet["tweet_url"] = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+	if tweet["place"] is not None:
+		temp_tweet["country"] = tweet["place"]["country_code"]
+	temp_tweet['topic'] = topic.split()[0]
 
     return temp_tweet
 
@@ -156,7 +154,7 @@ if __name__ == "__main__":
     else:
         id_tweet = tweet_list[len(tweet_list) - 1]["id"]
 
-    topics = ["sport", "music", "cinema", "technology", "politic", "economy"]
+	topics = ['sport -filter:retweets', 'music -filter:retweets', 'cinema -filter:retweets', 'technology -filter:retweets', 'politic -filter:retweets', 'economy -filter:retweets']
 
     # per ogni topic scarico MAX_TWEETS tweet e creo lista di oggetti tweet
     for topic in topics:

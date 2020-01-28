@@ -114,6 +114,9 @@ if __name__ == "__main__":
         user_tweets[user] = json.load(
             open(os.path.join("..", "user_profile", "data", user + ".json"))
         )
+    
+    if not os.path.exists('./data'):
+        os.makedirs('./data')
 
     print("* PREPROCESSING QUERY TWEETS")
     init = time.time()
