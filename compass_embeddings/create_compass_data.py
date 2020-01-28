@@ -12,28 +12,70 @@ from nltk.corpus import stopwords
 
 english_stopwords = set(stopwords.words("english"))
 uppercase_regex = re.compile(r"[a-z]+|[A-Z][a-z]+|\d+|[A-Z]+(?![a-z])")
-url_regex = re.compile(r"https?:\/\/.*[\r\n]*")
-hashtag_regex = re.compile(r"#([^\s#@]+)")
+url_regex = re.compile(
+    # u"^"
+    # protocol identifier
+    u"(?:(?:(?:https?|ftp):)?//)"
+    # user:pass authentication
+    u"(?:\S+(?::\S*)?@)?" u"(?:"
+    # IP address exclusion
+    # private & local networks
+    u"(?!(?:10|127)(?:\.\d{1,3}){3})"
+    u"(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})"
+    u"(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})"
+    # IP address dotted notation octets
+    # excludes loopback network 0.0.0.0
+    # excludes reserved space >= 224.0.0.0
+    # excludes network & broadcast addresses
+    # (first & last IP address of each class)
+    u"(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])"
+    u"(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}"
+    u"(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))"
+    u"|"
+    # host & domain names, may end with dot
+    # can be replaced by a shortest alternative
+    # u"(?![-_])(?:[-\w\u00a1-\uffff]{0,63}[^-_]\.)+"
+    # u"(?:(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)"
+    # # domain name
+    # u"(?:\.(?:[a-z\u00a1-\uffff0-9]-?)*[a-z\u00a1-\uffff0-9]+)*"
+    u"(?:"
+    u"(?:"
+    u"[a-z0-9\u00a1-\uffff]"
+    u"[a-z0-9\u00a1-\uffff_-]{0,62}"
+    u")?"
+    u"[a-z0-9\u00a1-\uffff]\."
+    u")+"
+    # TLD identifier name, may end with dot
+    u"(?:[a-z\u00a1-\uffff]{2,}\.?)" u")"
+    # port number (optional)
+    u"(?::\d{2,5})?"
+    # resource path (optional)
+    u"(?:[/?#]\S*)?" 
+    # u"$",
+    , re.UNICODE | re.I | re.MULTILINE,
+)
+hashtag_regex = re.compile(r"#([^\s#@]+)", flags=re.MULTILINE)
 
 
 def split_by_capital_letter(m: re.Match):
     return " ".join(uppercase_regex.findall(m.group(1)))
 
+def url_sub(m: re.Match):
+    print(m)
 
 def preprocess(doc):
     tokens = []
     yeah_tokens = []
     for tweet in doc:
-        tweet = html.unescape(tweet)
-        tweet = url_regex.sub("", tweet)
+        tweet = html.unescape(html.unescape(tweet))
+        tweet = url_regex.sub('', tweet)
         tweet = hashtag_regex.sub(split_by_capital_letter, tweet)
         tokens = word_tokenize(tweet)
         for token in tokens:
             token = token.lower()
             if not (token == "rt" or token in english_stopwords or not token.isalnum()):
                 yeah_tokens.append(token)
-    if yeah_tokens != "":
-        return " ".join(yeah_tokens)
+    return " ".join(yeah_tokens)
 
 
 if __name__ == "__main__":

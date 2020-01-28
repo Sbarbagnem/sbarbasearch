@@ -34,7 +34,7 @@ list_user = [
                     'if \"copy\", temporal models are initiliazed as a copy of the context model
                     (same vocabulary)
 """
-aligner = TWEC(size=50, sg=1, siter=30, diter=30, workers=6)
+aligner = TWEC(size=50, sg=0, siter=30, diter=30, workers=6)
 aligner.train_compass(
     os.path.join(".", "data", "compass.txt"), overwrite=False
 )  # keep an eye on the overwrite behaviour
