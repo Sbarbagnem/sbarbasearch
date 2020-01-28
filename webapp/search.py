@@ -82,8 +82,17 @@ def query_search(query, count_result, user, topic, method):
 
     if topic != "None":
         must.append({"term": {"topic": topic}})
-        # topic_filter = {"filter":{"term": {"topic": topic}}}
+        
+    # vedere dove belo mette le cose
+    #should.append({"term": {"country": users_country[user]}})
+
+    # add relevance dimension popularity: retweet, like and followers_count
+    should.append({"rank_feature": {"field": "popularity.retweet","boost": 0.4}})
+    should.append({"rank_feature": {"field": "popularity.like","boost": 0.3}})
+    should.append({"rank_feature": {"field": "popularity.followers_count","boost": 0.2}})
+
     print("SHOULD", should)
+    
     q = {"must": must, "should": should}
     body = {"size": count_result, "query": {"function_score": {"query": {"bool": q}}}}
     res = client.search(index="index_twitter", body=body)

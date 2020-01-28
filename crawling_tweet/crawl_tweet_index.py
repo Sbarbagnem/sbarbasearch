@@ -33,9 +33,16 @@ def process_tweet(tweet, id, topic):
     temp_tweet["created_at"] = tweet.created_at.isoformat()
     temp_tweet["text"] = tweet.full_text
     temp_tweet["name_user"] = tweet.user.name
+    temp_tweet["popularity"] = {
+        "retweet": int(tweet.retweet_count),
+        "like": int(tweet.favorite_count),
+        "followers_count": int(tweet.user.followers_count)
+    }
+    '''
     temp_tweet["followers_count"] = int(tweet.user.followers_count)
     temp_tweet["like"] = int(tweet.favorite_count)
     temp_tweet["retweet"] = int(tweet.retweet_count)
+    '''
     temp_tweet["profile_image_url"] = tweet.user.profile_image_url_https
     temp_tweet["tweet_url"] = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
 	if tweet["place"] is not None:
