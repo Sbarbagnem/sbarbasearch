@@ -10,6 +10,7 @@ import multiprocessing as mp
 from tqdm import tqdm
 from nltk import word_tokenize
 from nltk.corpus import stopwords
+from config import USERS_LIST
 
 english_stopwords = set(stopwords.words("english"))
 uppercase_regex = re.compile(r"[a-z]+|[A-Z][a-z]+|\d+|[A-Z]+(?![a-z])")
@@ -91,26 +92,12 @@ def preprocess(doc, verbose=False):
 if __name__ == "__main__":
     preprocess_data = True
     preprocess_method = "nltk"
-    list_user = [
-        "@MarcusRashford",
-        "@AaronDonald97",
-        "@GreenDay",
-        "@MartinGarrix",
-        "@EmmaWatson",
-        "@VancityReynolds",
-        "@elonmusk",
-        "@IBM",
-        "@realDonaldTrump",
-        "@BorisJohnson",
-        "@Yunus_Centre",
-        "@JosephEStiglitz",
-    ]
 
     query_tweets = json.load(open(os.path.join("..", "crawling_tweet", "tweet.json")))
     query_tweets = [query_tweet["text"] for query_tweet in query_tweets]
 
     user_tweets = {}
-    for user in list_user:
+    for user in USERS_LIST:
         user_tweets[user] = json.load(
             open(os.path.join("..", "user_profile", "data", user + ".json"))
         )
@@ -128,7 +115,7 @@ if __name__ == "__main__":
         f.write(query_tweets)
 
     compass = query_tweets
-    for user in list_user:
+    for user in USERS_LIST:
         print("* PREPROCESSING " + user + " TWEETS")
         init = time.time()
         user_tweet = preprocess(user_tweets[user])

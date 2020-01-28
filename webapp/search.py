@@ -3,7 +3,7 @@ import json
 import numpy as np
 from elasticsearch import Elasticsearch
 from gensim.models.word2vec import Word2Vec
-from compass_embeddings.create_compass_data import preprocess
+from compass_embeddings.create_twec_data import preprocess
 
 query_embeddings = Word2Vec.load(
     os.path.join("compass_embeddings", "model", "query_tweets.model")
