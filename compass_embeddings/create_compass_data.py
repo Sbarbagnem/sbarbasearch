@@ -7,6 +7,7 @@ import string
 import itertools
 import numpy as np
 import multiprocessing as mp
+from tqdm import tqdm
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 
@@ -50,30 +51,39 @@ url_regex = re.compile(
     # port number (optional)
     u"(?::\d{2,5})?"
     # resource path (optional)
-    u"(?:[/?#]\S*)?" 
+    u"(?:[/?#]\S*)?"
     # u"$",
-    , re.UNICODE | re.I | re.MULTILINE,
+    ,
+    re.UNICODE | re.I | re.MULTILINE,
 )
 hashtag_regex = re.compile(r"#([^\s#@]+)", flags=re.MULTILINE)
+non_alphanum_regex = re.compile(r'\W+')  # Match everything that is not contained in [a-zA-Z0-9_]
 
 
 def split_by_capital_letter(m: re.Match):
     return " ".join(uppercase_regex.findall(m.group(1)))
 
-def url_sub(m: re.Match):
-    print(m)
 
-def preprocess(doc):
+def preprocess(doc, verbose=False):
     tokens = []
     yeah_tokens = []
-    for tweet in doc:
+    for tweet in tqdm(doc):
+        if verbose:
+            print('* BEFORE')
+            print(tweet)
         tweet = html.unescape(html.unescape(tweet))
-        tweet = url_regex.sub('', tweet)
+        tweet = url_regex.sub("", tweet)
         tweet = hashtag_regex.sub(split_by_capital_letter, tweet)
+        if verbose:
+            print('* AFTER REGEXES PREPROCESSING')
+            print(tweet)
         tokens = word_tokenize(tweet)
+        if verbose:
+            print('* AFTER TOKENIZATION')
+            print(tokens)
         for token in tokens:
             token = token.lower()
-            if not (token == "rt" or token in english_stopwords or not token.isalnum()):
+            if not (token == "rt" or token in english_stopwords or non_alphanum_regex.match(token)):
                 yeah_tokens.append(token)
     return " ".join(yeah_tokens)
 
