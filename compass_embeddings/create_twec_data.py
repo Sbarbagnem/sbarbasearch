@@ -3,17 +3,13 @@ import re
 import json
 import time
 import html
-import string
-import itertools
 import contractions
-import numpy as np
 from tqdm import tqdm
 import multiprocessing as mp
 from config import USERS_LIST
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize.casual import TweetTokenizer
-from joblib import parallel_backend, Parallel, delayed
 from preprocess.tweet_preprocess import TweetPreprocess
 
 english_stopwords = set(stopwords.words("english"))
@@ -78,7 +74,7 @@ if __name__ == "__main__":
     init = time.time()
     # with mp.Pool(processes=cores-2) as pool:
     #     query_tweets = pool.map(preprocess, query_tweets)
-    query_tweets = preprocess(query_tweets[:100], verbose=True)
+    query_tweets = preprocess(query_tweets, verbose=False)
     print("* DONE. EXPRIRED TIME: ", time.time() - init)
     exit(1)
     with open(
