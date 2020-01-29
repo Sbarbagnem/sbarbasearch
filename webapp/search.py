@@ -1,9 +1,10 @@
 import os
 import json
+import itertools
 import numpy as np
 from elasticsearch import Elasticsearch
 from gensim.models.word2vec import Word2Vec
-from compass_embeddings.create_twec_data import preprocess
+from preprocess.tweet_preprocess import TweetPreprocess
 
 query_embeddings = Word2Vec.load(
     os.path.join("compass_embeddings", "model", "query_tweets.model")
@@ -50,7 +51,9 @@ def query_search(query, count_result, user, topic, method):
                 )
                 user_embedding = user_embeddings[user]
 
-            preprocessed_query = preprocess([query])
+            preprocessed_query = " ".join(
+                list(itertools.chain(*TweetPreprocess.preprocess(query)))
+            )
             vectors = []
             shoulds = []
             for token in preprocessed_query.split():
@@ -90,17 +93,17 @@ def query_search(query, count_result, user, topic, method):
 
     if topic != "None":
         must.append({"term": {"topic": topic}})
-        
+
     # TODO: vedere dove belo mette le cose
-    #should.append({"term": {"country": users_country[user]}})
+    # should.append({"term": {"country": users_country[user]}})
 
     # add relevance dimension popularity: retweet, like and followers_count
-    should.append({"rank_feature": {"field": "popularity.retweet","boost": 3}})
-    should.append({"rank_feature": {"field": "popularity.like","boost": 2}})
+    should.append({"rank_feature": {"field": "popularity.retweet", "boost": 3}})
+    should.append({"rank_feature": {"field": "popularity.like", "boost": 2}})
     # should.append({"rank_feature": {"field": "popularity.followers_count","boost": 0.2}})
 
     print("SHOULD", should)
-    
+
     q = {"must": must, "should": should}
     body = {"size": count_result, "query": {"function_score": {"query": {"bool": q}}}}
     res = client.search(index="index_twitter", body=body)
