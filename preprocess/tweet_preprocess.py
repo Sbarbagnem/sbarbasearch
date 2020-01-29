@@ -2,13 +2,12 @@ import re
 import html
 import emoji
 import nltk
+import regex
 import string
 from tqdm import tqdm
 from nltk.corpus import stopwords
 
-english_stopwords = set(stopwords.words("english"))
-
-MIN_YEAR = 1900
+MIN_YEAR = 0
 MAX_YEAR = 2100
 
 STOP_WORDS = [
@@ -1175,7 +1174,7 @@ STOP_WORDS = [
 ]
 
 
-def get_url_patern():
+def get_url_pattern():
     return re.compile(
         r"(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))"
         r"[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})"
@@ -1241,7 +1240,7 @@ def get_negations_pattern():
 
 
 def is_year(text):
-    if (len(text) == 3 or len(text) == 4) and (MIN_YEAR < len(text) < MAX_YEAR):
+    if (len(text) == 3 or len(text) == 4) and (MIN_YEAR < int(text) < MAX_YEAR):
         return True
     else:
         return False
@@ -1293,16 +1292,18 @@ def get_full_url_pattern():
     )
 
 
+def get_numbers_pattern():
+    return regex.compile(
+        r"(\d+)(?<!#\d+)"
+    )  # Match numbers only if they're not hashtags
+
+
 def get_uppercase_pattern():
-    return re.compile(r"[a-z]+|[A-Z][a-z]+|\d+|[A-Z]+(?![a-z])")
+    return re.compile(r"([A-Z][a-z]+)")
 
 
 def get_non_alphanum_pattern():
     return re.compile(r"\W+")  # Match everything that is not contained in [a-zA-Z0-9_]
-
-
-def split_by_capital_letter(m: re.Match):
-    return " ".join(get_uppercase_pattern().findall(m.group(1)))
 
 
 class TweetPreprocess:
@@ -1313,12 +1314,16 @@ class TweetPreprocess:
         self.full_url_pattern = get_full_url_pattern()
         self.hashtags_pattern = get_hashtags_pattern()
         self.mentions_pattern = get_mentions_pattern()
+        self.numbers_pattern = get_numbers_pattern()
         self.negations_pattern = get_negations_pattern()
         self.non_alphanum_pattern = get_non_alphanum_pattern()
         self.single_letter_words_pattern = get_single_letter_words_pattern()
         self.twitter_reserved_words_pattern = get_twitter_reserved_words_pattern()
         self.uppercase_pattern = get_uppercase_pattern()
-        self.url_patern = get_url_patern()
+        self.url_pattern = get_url_pattern()
+        self.whitespace_trans = str.maketrans(string.punctuation, " " * len(string.punctuation))
+        self.non_whitespace_trans = str.maketrans("", "", string.punctuation)
+        self.stop_words = set(stopwords.words("english"))
 
     def fully_preprocess(self):
         return (
@@ -1336,71 +1341,66 @@ class TweetPreprocess:
 
     def remove_urls(self, full=True):
         if full:
-            self.text = re.sub(
-                pattern=self.full_url_pattern, repl=" ", string=self.text
-            )
+            self.text = self.full_url_pattern.sub(repl=" ", string=self.text)
         else:
-            self.text = re.sub(pattern=self.url_patern, repl=" ", string=self.text)
+            self.text = self.url_pattern.sub(repl=" ", string=self.text)
         return self
 
-    def remove_punctuation(self):
-        self.text = self.text.translate(str.maketrans("", "", string.punctuation))
+    def remove_punctuation(self, repl=" "):
+        if repl == " ":
+            self.text = self.text.translate(self.whitespace_trans)
+        else: 
+            self.text = self.text.translate(self.non_whitespace_trans)
         return self
 
     def remove_emojis(self):
-        self.text = re.sub(pattern=self.emojis_pattern, repl=" ", string=self.text)
+        self.text = self.emojis_pattern.sub(repl=" ", string=self.text)
         return self
 
     def remove_mentions(self):
-        self.text = re.sub(pattern=self.mentions_pattern, repl=" ", string=self.text)
+        self.text = self.mentions_pattern.sub(repl=" ", string=self.text)
         return self
 
+    def split_by_capital_letter(self, m: re.Match):
+        return " ".join(
+            [token for token in self.uppercase_pattern.split(m.group(1)) if token]
+        )
+
     def remove_hashtags(self, split_capital_letter=True):
-        if split_by_capital_letter:
-            self.text = re.sub(
-                pattern=self.hashtags_pattern,
-                repl=split_by_capital_letter,
-                string=self.text,
+        if split_capital_letter:
+            self.text = self.hashtags_pattern.sub(
+                repl=self.split_by_capital_letter, string=self.text,
             )
         else:
-            self.text = re.sub(
-                pattern=self.hashtags_pattern, repl=" ", string=self.text
-            )
+            self.text = self.hashtags_pattern.sub(repl=" ", string=self.text)
         return self
 
     def remove_twitter_reserved_words(self):
-        self.text = re.sub(
-            pattern=self.twitter_reserved_words_pattern, repl=" ", string=self.text
-        )
+        self.text = self.twitter_reserved_words_pattern.sub(repl=" ", string=self.text)
         return self
 
     def remove_single_letter_words(self):
-        self.text = re.sub(
-            pattern=self.single_letter_words_pattern, repl=" ", string=self.text
-        )
+        self.text = self.single_letter_words_pattern.sub(repl=" ", string=self.text)
         return self
 
     def remove_blank_spaces(self):
-        self.text = re.sub(
-            pattern=self.blank_spaces_pattern, repl=" ", string=self.text
-        )
+        self.text = self.blank_spaces_pattern.sub(repl=" ", string=self.text)
         return self
 
     def remove_stopwords(self, extra_stopwords=None):
         if extra_stopwords is None:
             extra_stopwords = []
         text = nltk.word_tokenize(self.text)
-        stop_words = set(stopwords.words("english"))
 
         new_sentence = []
         for w in text:
-            if w not in stop_words and w not in extra_stopwords:
+            if w not in self.stop_words and w not in extra_stopwords:
                 new_sentence.append(w)
         self.text = " ".join(new_sentence)
         return self
 
     def remove_numbers(self, preserve_years=False):
-        text_list = self.text.split(" ")
+        text_list = self.numbers_pattern.split(self.text)
         for text in text_list:
             if text.isnumeric():
                 if preserve_years:
@@ -1417,5 +1417,5 @@ class TweetPreprocess:
         return self
 
     def handle_negations(self):
-        self.text = re.sub(pattern=self.negations_pattern, repl=" ", string=self.text)
+        self.text = self.negations_pattern.sub(repl=" ", string=self.text)
         return self

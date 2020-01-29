@@ -13,6 +13,7 @@ from config import USERS_LIST
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize.casual import TweetTokenizer
+from joblib import parallel_backend, Parallel, delayed
 from preprocess.tweet_preprocess import TweetPreprocess
 
 english_stopwords = set(stopwords.words("english"))
@@ -21,12 +22,12 @@ non_alphanum_regex = re.compile(
 )  # Match everything that is not contained in [a-zA-Z0-9_]
 
 
-def preprocess(doc, tokenizer='twitter', verbose=False):
+def preprocess(doc, tokenizer="nltk", verbose=False):
     preprocessor = TweetPreprocess(text="")
     tokens = []
     yeah_tokens = []
     tokenizer = word_tokenize
-    if tokenizer == 'twitter':
+    if tokenizer == "twitter":
         tokenizer = TweetTokenizer().tokenize
     for tweet in tqdm(doc):
         if verbose:
@@ -36,11 +37,15 @@ def preprocess(doc, tokenizer='twitter', verbose=False):
         # tweet = html.unescape(html.unescape(tweet))
         preprocessor.remove_urls(full=True)
         # tweet = url_regex.sub("", tweet)
-        preprocessor.remove_hashtags(split_capital_letter=True)
-        # tweet = hashtag_regex.sub(split_by_capital_letter, tweet)
         preprocessor.remove_mentions()
         preprocessor.remove_emojis()
-        tweet = contractions.fix(preprocessor.text)
+        # It must be called before removing hashtags, because it splits up on numbers that do not start with an hashtag
+        preprocessor.remove_numbers(preserve_years=True)
+        preprocessor.remove_hashtags(split_capital_letter=True)
+        # tweet = hashtag_regex.sub(split_by_capital_letter, tweet)
+        preprocessor.text = contractions.fix(preprocessor.text)
+        preprocessor.remove_punctuation(repl=" ")
+        tweet = preprocessor.text
         if verbose:
             print("* AFTER REGEXES PREPROCESSING")
             print(tweet)
@@ -70,15 +75,16 @@ if __name__ == "__main__":
             open(os.path.join("user_profile", "data", user + ".json"))
         ).values()
 
-    if not os.path.exists('./data'):
-        os.makedirs('./data')
+    if not os.path.exists("./data"):
+        os.makedirs("./data")
 
     print("* PREPROCESSING QUERY TWEETS")
     init = time.time()
     # with mp.Pool(processes=cores-2) as pool:
     #     query_tweets = pool.map(preprocess, query_tweets)
-    query_tweets = preprocess(query_tweets, verbose=False)
+    query_tweets = preprocess(query_tweets[:100], verbose=True)
     print("* DONE. EXPRIRED TIME: ", time.time() - init)
+    exit(1)
     with open(
         os.path.join("compass_embeddings", "data", "query_tweets.txt"), "w+"
     ) as f:
