@@ -1,7 +1,7 @@
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 import json
-from setting_analyzer import MAPPING
+from indexer.setting_analyzer import MAPPING
 
 
 def index_exist():
@@ -82,12 +82,17 @@ def index_batch(tweets):
             "created_at": tweet["created_at"],
             "text": tweet["text"],
             "user": tweet["name_user"],
-            "followers_count": tweet["followers_count"],
-            "like": tweet["like"],
-            "retweet": tweet["retweet"],
+            # "followers_count": tweet["followers_count"],
+            # "like": tweet["like"],
+            # "retweet": tweet["retweet"],
             "profile_image": tweet["profile_image_url"],
             "tweet_url": tweet["tweet_url"],
             "topic": tweet["topic"],
+            "popularity": {
+                "followers_count": int(tweet["followers_count"])+1,
+                "like": int(tweet["like"])+1,
+                "retweet": int(tweet["retweet"])+1,
+            }
         }
         requests.append(request)
 
@@ -103,7 +108,7 @@ if __name__ == "__main__":
     NAME_INDEX = "index_twitter"
     # batch to upload n tweet for bulk
     BATCH = 10000
-    PATH_TO_JSON_TWEET = "../crawling_tweet/tweet.json"
+    PATH_TO_JSON_TWEET = "./crawling_tweet/tweet.json"
 
     if index_exist():
         print("Esiste già l'index")

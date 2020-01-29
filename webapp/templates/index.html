@@ -87,7 +87,7 @@
     <select id="profile" class="form-control" name="profile">
       <option value="None" selected>None</option>
       <option value="AaronDonald97">Aaron Donald</option>
-      <option value="BorisJonson">Boris Jonson</option>
+      <option value="BorisJohnson">Boris Johnson</option>
       <option value="elonmusk">Elon Musk</option>
       <option value="EmmaWatson">Emma Watson</option>
       <option value="GreenDay">Green Day</option>
@@ -135,6 +135,10 @@
     <div class="col-md-10">
       <!-- <p3>{{tweet._source.topic}}</p3> -->
       <p3>{{tweet._source.text}}</p3>
+      <br>
+      <p3>Retweets: {{tweet._source.popularity.retweet}}</p3>
+      <br>
+      <p3>Likes: {{tweet._source.popularity.like}}</p3>
       <br>
       <a href="{{tweet._source.tweet_url}}">Link to original tweet</a>
     </div>

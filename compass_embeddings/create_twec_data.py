@@ -22,6 +22,7 @@ non_alphanum_regex = re.compile(
 
 
 def preprocess(doc, tokenizer='twitter', verbose=False):
+    preprocessor = TweetPreprocess(text="")
     tokens = []
     yeah_tokens = []
     tokenizer = word_tokenize
@@ -60,9 +61,6 @@ def preprocess(doc, tokenizer='twitter', verbose=False):
 
 
 if __name__ == "__main__":
-    tweet_tokenizer = TweetTokenizer()
-    preprocessor = TweetPreprocess(text="")
-
     query_tweets = json.load(open(os.path.join("crawling_tweet", "tweet.json")))
     query_tweets = [query_tweet["text"] for query_tweet in query_tweets]
 
