@@ -95,7 +95,6 @@ def query_search(query, count_result, user, topic, method, location_search):
     # possibile filtraggio a priori per topic
     if topic != "None":
         must.append({"term": {"topic": topic}})
-<<<<<<< HEAD
         
     # amento rilevnza documenti che hanno country_code uguale a quello dell'utente
     should.append({"term": {"country": USER_COUNTRY[user]}})
@@ -115,16 +114,6 @@ def query_search(query, count_result, user, topic, method, location_search):
                         }
                     }
         )
-=======
-
-    # TODO: vedere dove belo mette le cose
-    # should.append({"term": {"country": users_country[user]}})
-
-    # add relevance dimension popularity: retweet, like and followers_count
-    should.append({"rank_feature": {"field": "popularity.retweet", "boost": 3}})
-    should.append({"rank_feature": {"field": "popularity.like", "boost": 2}})
-    # should.append({"rank_feature": {"field": "popularity.followers_count","boost": 0.2}})
->>>>>>> a0eeb24c7c81cba4a37661fc3c6bceec11b293f5
 
     print("SHOULD", should)
 
