@@ -109,7 +109,7 @@ def query_search(query, count_result, user, topic, method, location_search):
         should.append({ 
                         "distance_feature": {
                             "field": "location",
-                            "pivot": "30km",
+                            "pivot": "200km",
                             "origin": location_search
                         }
                     }
