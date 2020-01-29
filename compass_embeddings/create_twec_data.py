@@ -34,22 +34,18 @@ def preprocess(doc, tokenizer="nltk", verbose=False):
             print("* BEFORE")
             print(tweet)
         preprocessor.text = html.unescape(html.unescape(tweet))
-        # tweet = html.unescape(html.unescape(tweet))
         preprocessor.remove_urls(full=True)
-        # tweet = url_regex.sub("", tweet)
         preprocessor.remove_mentions()
         preprocessor.remove_emojis()
         # It must be called before removing hashtags, because it splits up on numbers that do not start with an hashtag
         preprocessor.remove_numbers(preserve_years=True)
         preprocessor.remove_hashtags(split_capital_letter=True)
-        # tweet = hashtag_regex.sub(split_by_capital_letter, tweet)
         preprocessor.text = contractions.fix(preprocessor.text)
         preprocessor.remove_punctuation(repl=" ")
-        tweet = preprocessor.text
         if verbose:
             print("* AFTER REGEXES PREPROCESSING")
-            print(tweet)
-        tokens = tokenizer(tweet)
+            print(preprocessor.text)
+        tokens = tokenizer(preprocessor.text)
         if verbose:
             print("* AFTER TOKENIZATION")
             print(tokens)

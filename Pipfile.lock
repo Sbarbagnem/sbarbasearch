@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "189a3947d4ebff450ab6671df1c283fd1d3c17d3d6c650b321630a90e7fc9433"
+            "sha256": "23debeeb443e64e336139e725b2f59b6931a0c240a18bb611933a496e40b40f5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -58,6 +58,14 @@
             ],
             "version": "==7.0"
         },
+        "contractions": {
+            "hashes": [
+                "sha256:4601643e13f6abd947a1da48927f2deeeee2faecbcd254c783dbb0022a61804f",
+                "sha256:a9edb35e17bab530531aaf0c64cf3b3e526c7f901847103e7c4643e76eddb1b6"
+            ],
+            "index": "pypi",
+            "version": "==0.0.24"
+        },
         "cython": {
             "hashes": [
                 "sha256:03f6bbb380ad0acb744fb06e42996ea217e9d00016ca0ff6f2e7d60f580d0360",
@@ -95,13 +103,6 @@
             ],
             "index": "pypi",
             "version": "==0.29.14"
-        "contractions": {
-            "hashes": [
-                "sha256:4601643e13f6abd947a1da48927f2deeeee2faecbcd254c783dbb0022a61804f",
-                "sha256:a9edb35e17bab530531aaf0c64cf3b3e526c7f901847103e7c4643e76eddb1b6"
-            ],
-            "index": "pypi",
-            "version": "==0.0.24"
         },
         "docutils": {
             "hashes": [
@@ -190,14 +191,6 @@
                 "sha256:bde2aef6f44302dfb30320115b17d030798de8c4110e28d5cf6cf91a7a31074c"
             ],
             "version": "==0.9.4"
-        },
-        "joblib": {
-            "hashes": [
-                "sha256:0630eea4f5664c463f23fbf5dcfc54a2bc6168902719fa8e19daf033022786c8",
-                "sha256:bdb4fd9b72915ffb49fde2229ce482dd7ae79d842ed8c2b4c932441495af1403"
-            ],
-            "index": "pypi",
-            "version": "==0.14.1"
         },
         "markupsafe": {
             "hashes": [

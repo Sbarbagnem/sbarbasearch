@@ -15,9 +15,10 @@ nltk = "*"
 gensim = "*"
 tqdm = "*"
 pandas = "*"
+cython = "*"
+twec = {git = "https://github.com/valedica/gensim.git"}
 emoji = "*"
 contractions = "*"
-joblib = "*"
 
 [requires]
 python_version = "3.7"
