@@ -17,15 +17,26 @@ def search():
 
     query = request.args.get("search")
     count = request.args.get("number_result")
+    
     # se settato aggiungo bow del profilo alla query
     user = request.args.get("profile")
+
     # se settato cerco solo nei tweet con quello specifico tweet
     topic = request.args.get("topic")
     method = request.args.get("method")
 
-    # print('Voglio trovare ', count, ' tweet')
+    lat = request.args.get("lat")
+    lon = request.args.get("lon")
 
-    res = query_search(query, count_result=count, user=user, topic=topic, method=method)
+    if lat != '' and lon !='':
+        location_search = [int(lat),int(lon)]
+    else:
+        location_search = 'None'
+
+    res = query_search(
+        query, count_result=count, user=user, topic=topic, method=method,
+        location_search=location_search
+    )
 
     return render_template("index.html", tweets=res, search_term=query)
 

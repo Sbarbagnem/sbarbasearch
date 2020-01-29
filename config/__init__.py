@@ -15,6 +15,21 @@ USERS_LIST = [
     "@JosephEStiglitz",
 ]
 
+USER_COUNTRY = {
+    'AaronDonald97': "US",
+    'BorisJohnson': 'GB',
+    'elonmusk': 'ZA',
+    'EmmaWatson': 'FR',
+    'GreenDay': 'US',
+    'IBM': 'US',
+    'JosephEStiglitz': 'US',
+    'MarcusRashford': 'GB',
+    'MartinGarrix': 'NL',
+    'realDonaldTrump': 'US',
+    'VancityReynolds': 'CA',
+    'Yunus_Centre': 'BD'
+}
+
 # app token
 CONSUMER_KEY = "EQa4iFjD2wXsvYnysJwwn3m3R"
 CONSUMER_SECRET = "7uxYmpqUqNKr4Y1DCTSB0K3vEEWZ0lFNtmiQfovD954G81SUjL"

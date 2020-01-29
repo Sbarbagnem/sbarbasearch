@@ -73,23 +73,6 @@ MAPPING = {
             "popularity": {
                 "type": "rank_features"
             },
-            '''
-            "followers_count": {
-                "type": "integer",
-                "index": False,
-                "store" : True
-            },
-            "like": {
-                "type": "integer",
-                "index": False,
-                "store" : True
-            },
-            "retweet": {
-                "type": "integer",
-                "index": False,
-                "store" : True
-            },
-            '''
             "profile_image": {
                 "type": "keyword",
                 "index": False,
@@ -104,6 +87,15 @@ MAPPING = {
                 "type": "keyword",
                 "index": True,
                 "store": True
+            }
+            "country": {
+                "type": "keyword",
+                "index": True,
+                "store": True,
+                "analyzer": "standard"
+            }
+            "location": {
+                "type": "geo_point"
             }
         }
     }

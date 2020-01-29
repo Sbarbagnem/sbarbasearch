@@ -5,6 +5,7 @@ import numpy as np
 from elasticsearch import Elasticsearch
 from gensim.models.word2vec import Word2Vec
 from preprocess.tweet_preprocess import TweetPreprocess
+from config import USER_COUNTRY
 
 query_embeddings = Word2Vec.load(
     os.path.join("compass_embeddings", "model", "query_tweets.model")
@@ -12,7 +13,7 @@ query_embeddings = Word2Vec.load(
 user_embeddings = {}
 
 
-def query_search(query, count_result, user, topic, method):
+def query_search(query, count_result, user, topic, method, location_search):
     client = Elasticsearch()
 
     # termini che possono comparire
@@ -91,16 +92,29 @@ def query_search(query, count_result, user, topic, method):
                     }
                 )
 
+    # possibile filtraggio a priori per topic
     if topic != "None":
         must.append({"term": {"topic": topic}})
+        
+    # amento rilevnza documenti che hanno country_code uguale a quello dell'utente
+    should.append({"term": {"country": USER_COUNTRY[user]}})
 
-    # TODO: vedere dove belo mette le cose
-    # should.append({"term": {"country": users_country[user]}})
+    # aumento rilevanza dei documenti che sono molto popolari (retweet e like)
+    should.append({"rank_feature": {"field": "popularity.retweet","boost": 10}})
+    should.append({"rank_feature": {"field": "popularity.like","boost": 10}})
 
-    # add relevance dimension popularity: retweet, like and followers_count
-    should.append({"rank_feature": {"field": "popularity.retweet", "boost": 3}})
-    should.append({"rank_feature": {"field": "popularity.like", "boost": 2}})
-    # should.append({"rank_feature": {"field": "popularity.followers_count","boost": 0.2}})
+    # possibile aumento di rilevanza sulla base della distanza coordinate_tweet e coordinate_ricerca
+    # simuliamo una sorta di ricerca personalizzata sulla base della localizzazione
+    if location_search != 'None':
+        should.append({ 
+                        "distance_feature": {
+                            "field": "location",
+                            "pivot": "200km",
+                            "origin": location_search
+                            "boost": 5
+                        }
+                    }
+        )
 
     print("SHOULD", should)
 

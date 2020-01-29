@@ -1,15 +1,6 @@
 import tweepy
 import json
-import jsonpickle
 from config import CONSUMER_KEY, CONSUMER_SECRET
-
-# Creating the authentication object
-auth = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-# Setting your access token and secret
-
-# Creating the API object while passing in auth information
-api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-
 
 def process_tweet(tweet, id, topic):
     """
@@ -33,21 +24,21 @@ def process_tweet(tweet, id, topic):
     temp_tweet["created_at"] = tweet.created_at.isoformat()
     temp_tweet["text"] = tweet.full_text
     temp_tweet["name_user"] = tweet.user.name
-    temp_tweet["popularity"] = {
-        "retweet": int(tweet.retweet_count),
-        "like": int(tweet.favorite_count),
-        "followers_count": int(tweet.user.followers_count)
-    }
-    '''
     temp_tweet["followers_count"] = int(tweet.user.followers_count)
     temp_tweet["like"] = int(tweet.favorite_count)
     temp_tweet["retweet"] = int(tweet.retweet_count)
-    '''
     temp_tweet["profile_image_url"] = tweet.user.profile_image_url_https
     temp_tweet["tweet_url"] = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
-	if tweet["place"] is not None:
-		temp_tweet["country"] = tweet["place"]["country_code"]
-	temp_tweet['topic'] = topic.split()[0]
+    if tweet.place is not None:
+        temp_tweet["country"] = tweet.place.country_code
+    else:
+        temp_tweet["country"] = ''
+    if tweet.coordinates is not None:
+        temp_tweet['location'] = tweet.coordinates
+    else:
+        temp_tweet['location'] = []
+
+    temp_tweet['topic'] = topic.split()[0]
 
     return temp_tweet
 
@@ -87,7 +78,7 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        since="2020-01-22",
+                        #since="2020-01-29",
                         include_entities=False,
                     )
                 else:
@@ -97,7 +88,7 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        since="2020-01-22",
+                        #since="2020-01-29",
                         include_entities=False,
                         since_id=sinceId,
                     )
@@ -109,7 +100,7 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        since="2020-01-22",
+                        #since="2020-01-29",
                         include_entities=False,
                         max_id=str(max_id - 1),
                     )
@@ -120,7 +111,7 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        since="2020-01-22",
+                        #since="2020-01-29",
                         include_entities=False,
                         max_id=str(max_id - 1),
                         since_id=sinceId,
@@ -145,9 +136,16 @@ def crawl_tweet_for_topic(topic, id_tweet):
 
 if __name__ == "__main__":
 
-    MAX_TWEETS = 50000  # Some arbitrary large number
+    # Creating the authentication object
+    auth = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    # Setting your access token and secret
+
+    # Creating the API object while passing in auth information
+    api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+
+    MAX_TWEETS = 200000  # Some arbitrary large number
     TWEET_FOR_QUERY = 100  # this is the max the API permits
-    FILE_TWEETS = "./tweet.json"  # We'll store the tweets in a JSON file.
+    FILE_TWEETS = "crawling_tweet/tweet.json"  # We'll store the tweets in a JSON file.
 
     # leggo se nel json sono già presenti dei tweet
     tweet_list = read_tweet_pre_downladed(FILE_TWEETS)
@@ -161,7 +159,7 @@ if __name__ == "__main__":
     else:
         id_tweet = tweet_list[len(tweet_list) - 1]["id"]
 
-	topics = ['sport -filter:retweets', 'music -filter:retweets', 'cinema -filter:retweets', 'technology -filter:retweets', 'politic -filter:retweets', 'economy -filter:retweets']
+    topics = ['sport -filter:retweets', 'music -filter:retweets', 'cinema -filter:retweets', 'technology -filter:retweets', 'politic -filter:retweets', 'economy -filter:retweets']
 
     # per ogni topic scarico MAX_TWEETS tweet e creo lista di oggetti tweet
     for topic in topics:
@@ -172,6 +170,6 @@ if __name__ == "__main__":
         tweet_list.extend(temp_list)
         print("Ora nella lista ci sono: ", len(tweet_list), " tweets")
 
-    with open(FILE_TWEETS, "w") as outfile:
+    with open(FILE_TWEETS, "w+") as outfile:
         json.dump(tweet_list, outfile, indent=3)
 
