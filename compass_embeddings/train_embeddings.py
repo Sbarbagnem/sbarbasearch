@@ -20,10 +20,21 @@ from config import USERS_LIST
                     'if \"copy\", temporal models are initiliazed as a copy of the context model
                     (same vocabulary)
 """
-aligner = TWEC(size=50, sg=0, siter=20, diter=20, workers=7, opath=os.path.join("compass_embeddings", "model"))
+aligner = TWEC(
+    size=50,
+    sg=0,
+    siter=20,
+    diter=20,
+    workers=7,
+    opath=os.path.join("compass_embeddings", "model"),
+)
 aligner.train_compass(
     os.path.join("compass_embeddings", "data", "compass.txt"), overwrite=True
 )  # keep an eye on the overwrite behaviour
-aligner.train_slice(os.path.join("compass_embeddings", "data", "query_tweets.txt"), save=True)
+aligner.train_slice(
+    os.path.join("compass_embeddings", "data", "query_tweets.txt"), save=True
+)
 for user in USERS_LIST:
-    aligner.train_slice(os.path.join("compass_embeddings", "data", user + "_tweets.txt"), save=True)
+    aligner.train_slice(
+        os.path.join("compass_embeddings", "data", user + "_tweets.txt"), save=True
+    )
