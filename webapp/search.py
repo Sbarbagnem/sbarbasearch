@@ -111,6 +111,7 @@ def query_search(query, count_result, user, topic, method, location_search):
                             "field": "location",
                             "pivot": "200km",
                             "origin": location_search
+                            "boost": 5
                         }
                     }
         )
