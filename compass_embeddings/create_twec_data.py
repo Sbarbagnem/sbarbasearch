@@ -10,17 +10,14 @@ from preprocess.tweet_preprocess import TweetPreprocess
 
 if __name__ == "__main__":
 
-    load_query_txt = False
-    load_users_txt = False
     compute_n_grams = True
 
     if compute_n_grams:
         bigram = Phraser.load(os.path.join("compass_embeddings", "model", "bigram.pkl"))
         trigram = Phraser.load(os.path.join("compass_embeddings", "model", "trigram.pkl"))
 
-    if not load_query_txt:
-        query_tweets = json.load(open(os.path.join("crawling_tweet", "tweet.json")))
-        query_tweets = [query_tweet["text"] for query_tweet in query_tweets]
+    query_tweets = json.load(open(os.path.join("crawling_tweet", "tweet.json")))
+    query_tweets = [query_tweet["text"] for query_tweet in query_tweets]
 
     users_tweets = {}
     for user in USERS_LIST:

@@ -4,9 +4,12 @@ import itertools
 import numpy as np
 from elasticsearch import Elasticsearch
 from gensim.models.word2vec import Word2Vec
+from gensim.models.phrases import Phraser
 from preprocess.tweet_preprocess import TweetPreprocess
 from config import USER_COUNTRY
 
+bigram = Phraser.load(os.path.join("compass_embeddings", "model", "bigram.pkl"))
+trigram = Phraser.load(os.path.join("compass_embeddings", "model", "trigram.pkl"))
 query_embeddings = Word2Vec.load(
     os.path.join("compass_embeddings", "model", "query_tweets.model")
 )
@@ -31,7 +34,7 @@ def query_search(query, count_result, user, topic, method, location_search):
     if user != "None":
         if method == "bow":
             with open(
-                os.path.join("user_profile", "user_profile", "data", "bow.json")
+                os.path.join("user_profile", "data", "bow.json")
             ) as jsonfile:
                 data = json.load(jsonfile)
 
@@ -52,12 +55,10 @@ def query_search(query, count_result, user, topic, method, location_search):
                 )
                 user_embedding = user_embeddings[user]
 
-            preprocessed_query = " ".join(
-                list(itertools.chain(*TweetPreprocess.preprocess(query)))
-            )
+            preprocessed_query = trigram[bigram[TweetPreprocess.preprocess(query)]]
             vectors = []
             shoulds = []
-            for token in preprocessed_query.split():
+            for token in preprocessed_query:
                 try:
                     vectors.append(query_embeddings.wv.get_vector(token))
                 except KeyError:
@@ -83,11 +84,14 @@ def query_search(query, count_result, user, topic, method, location_search):
                     )
                 shoulds = sorted(shoulds, key=lambda x: x[1], reverse=True)
                 shoulds = [word for word, sim in shoulds]
+                shoulds = list(dict.fromkeys(shoulds).keys())[:10]
+                shoulds = [word.split("_") for word in shoulds]
+                shoulds = list(itertools.chain(*shoulds))
                 # Keep first 10 elements keeping order
                 should.append(
                     {
                         "match": {
-                            "text": " ".join(list(dict.fromkeys(shoulds).keys())[:10])
+                            "text": " ".join(shoulds)
                         }
                     }
                 )
@@ -110,7 +114,7 @@ def query_search(query, count_result, user, topic, method, location_search):
                         "distance_feature": {
                             "field": "location",
                             "pivot": "200km",
-                            "origin": location_search
+                            "origin": location_search,
                             "boost": 5
                         }
                     }
