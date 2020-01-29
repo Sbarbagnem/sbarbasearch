@@ -15,6 +15,8 @@ nltk = "*"
 gensim = "*"
 tqdm = "*"
 pandas = "*"
+cython = "*"
+twec = {git = "https://github.com/valedica/gensim.git"}
 
 [requires]
 python_version = "3.7"
