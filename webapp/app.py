@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request, render_template, redirect, url_for
 from elasticsearch import Elasticsearch
 from webapp.search import query_search
 
-app = Flask(__name__, static_url_path = "/static", static_folder = "static")
+app = Flask(__name__, static_url_path="/static", static_folder="static")
 es = Elasticsearch()
 
 
@@ -25,9 +25,7 @@ def search():
 
     # print('Voglio trovare ', count, ' tweet')
 
-    res = query_search(
-        query, count_result=count, user=user, topic=topic, method=method
-    )
+    res = query_search(query, count_result=count, user=user, topic=topic, method=method)
 
     return render_template("index.html", tweets=res, search_term=query)
 

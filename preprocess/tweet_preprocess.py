@@ -10,7 +10,7 @@ from nltk import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize.casual import TweetTokenizer
 
-MIN_YEAR = 0
+MIN_YEAR = 1900
 MAX_YEAR = 2100
 
 
@@ -80,7 +80,7 @@ def get_negations_pattern():
 
 
 def is_year(text):
-    if (len(text) == 3 or len(text) == 4) and (MIN_YEAR < int(text) < MAX_YEAR):
+    if len(text) == 4 and (MIN_YEAR < int(text) < MAX_YEAR):
         return True
     else:
         return False
