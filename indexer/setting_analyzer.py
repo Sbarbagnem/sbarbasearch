@@ -2,7 +2,13 @@ MAPPING = {
     "settings" : {
         "index" : {
             "number_of_shards" : 1,
-            "number_of_replicas" : 0
+            "number_of_replicas" : 0,
+            "similarity": {
+                "my_similarity": {
+                    "type": "LMJelinekMercer",
+                    "lambda": "0.2"
+                }
+            }
         },
         "analysis": {
             "analyzer": {
@@ -15,7 +21,7 @@ MAPPING = {
                     "filter": [
                         "classic",
                         "lowercase",
-                        "remove_digit_token",
+                        # "remove_digit_token",
                         "remove_link_token",
                         "remove_puntuaction",
                         "remove_length_less_two",
@@ -56,7 +62,8 @@ MAPPING = {
             "text": {
                 "type": "text",
                 "store" : True,
-                "analyzer" : "custom_analyzer"
+                "analyzer" : "custom_analyzer",
+                "similarity": "my_similarity"
             },
             "user": {
                 "type": "text",
@@ -94,11 +101,6 @@ MAPPING = {
                 "store" : True
             },
             "topic": {
-                "type": "keyword",
-                "index": True,
-                "store": True
-            },
-            "country": {
                 "type": "keyword",
                 "index": True,
                 "store": True

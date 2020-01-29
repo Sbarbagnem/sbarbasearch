@@ -28,7 +28,9 @@ def query_search(query, count_result, user, topic, method):
 
     if user != "None":
         if method == "bow":
-            with open("./user_profile/data/bow.json") as jsonfile:
+            with open(
+                os.path.join("user_profile", "user_profile", "data", "bow.json")
+            ) as jsonfile:
                 data = json.load(jsonfile)
 
             for bow in data:
@@ -78,18 +80,24 @@ def query_search(query, count_result, user, topic, method):
                 shoulds = sorted(shoulds, key=lambda x: x[1], reverse=True)
                 shoulds = [word for word, sim in shoulds]
                 # Keep first 10 elements keeping order
-                should.append({"match": {"text": " ".join(list(dict.fromkeys(shoulds).keys())[:10])}})
+                should.append(
+                    {
+                        "match": {
+                            "text": " ".join(list(dict.fromkeys(shoulds).keys())[:10])
+                        }
+                    }
+                )
 
     if topic != "None":
         must.append({"term": {"topic": topic}})
         
-    # vedere dove belo mette le cose
+    # TODO: vedere dove belo mette le cose
     #should.append({"term": {"country": users_country[user]}})
 
     # add relevance dimension popularity: retweet, like and followers_count
-    should.append({"rank_feature": {"field": "popularity.retweet","boost": 0.4}})
-    should.append({"rank_feature": {"field": "popularity.like","boost": 0.3}})
-    should.append({"rank_feature": {"field": "popularity.followers_count","boost": 0.2}})
+    should.append({"rank_feature": {"field": "popularity.retweet","boost": 3}})
+    should.append({"rank_feature": {"field": "popularity.like","boost": 2}})
+    # should.append({"rank_feature": {"field": "popularity.followers_count","boost": 0.2}})
 
     print("SHOULD", should)
     
