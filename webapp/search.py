@@ -106,24 +106,11 @@ def query_search(query, count_result, user, topic, method, location_search):
     # aumento rilevanza dei documenti che sono molto popolari (retweet e like)
     should.append({"rank_feature": {"field": "popularity.retweet","boost": 10}})
     should.append({"rank_feature": {"field": "popularity.like","boost": 10}})
-
-    # possibile aumento di rilevanza sulla base della distanza coordinate_tweet e coordinate_ricerca
-    # simuliamo una sorta di ricerca personalizzata sulla base della localizzazione
-    if location_search != 'None':
-        should.append({ 
-                        "distance_feature": {
-                            "field": "location",
-                            "pivot": "200km",
-                            "origin": location_search,
-                            "boost": 5
-                        }
-                    }
-        )
     
     should.append({
         "distance_feature": {
           "field": "created_at",
-          "pivot": "7d",
+          "pivot": "5d",
           "origin": "now"
         }
       })
