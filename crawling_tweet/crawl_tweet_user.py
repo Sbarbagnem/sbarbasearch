@@ -10,11 +10,12 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=False):
     alltweets = []
     # print(tweets_list)
     tweets = {}
+    old_tweet = {}
 
     if update:
         user_path = os.path.join("data", "users", user + ".json")
-        tweets = json.load(open(user_path, "rb"))
-        first_since_id = int(list(tweets.keys())[0]) - 1
+        old_tweet = json.load(open(user_path, "rb"))
+        first_since_id = int(list(old_tweet.keys())[0]) 
         new_tweets = api.user_timeline(
             screen_name=user,
             count=count,
@@ -26,7 +27,9 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=False):
         new_tweets = api.user_timeline(
             screen_name=user, count=count, tweet_mode="extended", include_entities=False
         )
-    oldest = new_tweets[-1].id - 1
+
+    if new_tweets != []:
+        oldest = new_tweets[-1].id
 
     # save most recent tweets
     alltweets.extend(new_tweets)
@@ -69,7 +72,9 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=False):
         else:
             tweets[tweet.id_str] = tweet.full_text
 
-    return tweets
+    merge_tweets = {**tweets, **old_tweet}
+    
+    return merge_tweets
 
 
 def save_tweer_for_user(user, tweets):
