@@ -82,9 +82,6 @@ def index_batch(tweets):
             "created_at": tweet["created_at"],
             "text": tweet["text"],
             "user": tweet["name_user"],
-            # "followers_count": tweet["followers_count"],
-            # "like": tweet["like"],
-            # "retweet": tweet["retweet"],
             "profile_image": tweet["profile_image_url"],
             "tweet_url": tweet["tweet_url"],
             "topic": tweet["topic"],
@@ -92,7 +89,9 @@ def index_batch(tweets):
                 "followers_count": int(tweet["followers_count"])+1,
                 "like": int(tweet["like"])+1,
                 "retweet": int(tweet["retweet"])+1,
-            }
+            },
+            "country": tweet["country"]
+            #"location": tweet["location"]
         }
         requests.append(request)
 
