@@ -113,15 +113,6 @@
     </select>
   </div>
   <div class="form-group">
-    <label>Select latitude and longitude to boost relevance based on actual location</label>
-    <div class="form-inline" id="lat_lon">
-      <input class="form-control mr-3" type="text" placeholder="Type latitude" name="lat"
-        value="{{ lat }}">
-      <input class="form-control" type="text" placeholder="Type longitude" name="lon"
-      value="{{ lon }}">
-    </div>
-  </div>
-  <div class="form-group">
     <label for="method">Select the method to encapsulate a user profile</label>
     <select id="method" class="form-control" name="method">
       <option value="bow" selected>Bag of words</option>
@@ -150,7 +141,7 @@
       <br>
       <p3>{{tweet._source.topic}}</p3> 
       <br>
-      <p3>{{tweet._source.location}}</p3>
+      <p3>{{tweet._source.country}}</p3>
       <br>
       <a href="{{tweet._source.tweet_url}}">Link to original tweet</a>
     </div>
