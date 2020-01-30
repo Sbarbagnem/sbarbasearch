@@ -1,7 +1,12 @@
 import os
+import logging
 from twec.twec import TWEC
 from gensim.models.word2vec import Word2Vec
 from config import USERS_LIST
+
+logging.basicConfig(
+    format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO
+)
 
 """
 :param size: Number of dimensions. Default is 100.
@@ -26,15 +31,15 @@ aligner = TWEC(
     siter=20,
     diter=20,
     workers=7,
-    opath=os.path.join("compass_embeddings", "model"),
+    opath=os.path.join("data", "models"),
 )
 aligner.train_compass(
-    os.path.join("compass_embeddings", "data", "compass.txt"), overwrite=True
+    os.path.join("data", "twec", "compass.txt"), overwrite=True
 )  # keep an eye on the overwrite behaviour
 aligner.train_slice(
-    os.path.join("compass_embeddings", "data", "query_tweets.txt"), save=True
+    os.path.join("data", "twec", "tweets.txt"), save=True
 )
 for user in USERS_LIST:
     aligner.train_slice(
-        os.path.join("compass_embeddings", "data", user + "_tweets.txt"), save=True
+        os.path.join("data", "twec", user + ".txt"), save=True
     )

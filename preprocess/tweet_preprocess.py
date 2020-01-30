@@ -165,7 +165,7 @@ class TweetPreprocess:
     stop_words = set(stopwords.words("english"))
 
     @classmethod
-    def preprocess(cls, tweet, tokenizer="nltk", verbose=False):
+    def preprocess(cls, tweet, tokenizer="nltk", verbose=False, return_list=True):
         tokens = []
         yeah_tokens = []
         tokenizer = word_tokenize
@@ -199,7 +199,10 @@ class TweetPreprocess:
                 or (token.isalpha() and len(token) < 2)
             ):
                 yeah_tokens.append(token)
-        return yeah_tokens
+        if return_list:
+            return yeah_tokens
+        else:
+            return " ".join(yeah_tokens)
 
     @classmethod
     def remove_urls(cls, tweet, full=True):
