@@ -56,7 +56,7 @@ MAPPING = {
         "properties": {
             "created_at": {
                 "type": "date",
-                "index": False,
+                "index": True,
                 "store" : True
             },
             "text": {
@@ -68,7 +68,7 @@ MAPPING = {
             "user": {
                 "type": "text",
                 "store" : True,
-                "analyzer" : "standard"
+                "index": False
             },
             "popularity": {
                 "type": "rank_features"
@@ -87,13 +87,12 @@ MAPPING = {
                 "type": "keyword",
                 "index": True,
                 "store": True
-            }
+            },
             "country": {
                 "type": "keyword",
                 "index": True,
-                "store": True,
-                "analyzer": "standard"
-            }
+                "store": True
+            },
             "location": {
                 "type": "geo_point"
             }
