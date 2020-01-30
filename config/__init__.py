@@ -9,7 +9,7 @@ USERS_LIST = [
     "@VancityReynolds",
     "@elonmusk",
     "@IBM",
-    "@realDonaldTrump",
+    "@BarackObama",
     "@BorisJohnson",
     "@Yunus_Centre",
     "@JosephEStiglitz",
@@ -25,7 +25,7 @@ USER_COUNTRY = {
     'JosephEStiglitz': 'US',
     'MarcusRashford': 'GB',
     'MartinGarrix': 'NL',
-    'realDonaldTrump': 'US',
+    'BarackObama': 'US',
     'VancityReynolds': 'CA',
     'Yunus_Centre': 'BD'
 }

@@ -4,49 +4,62 @@ import tweepy
 from config import USERS_LIST, CONSUMER_KEY, CONSUMER_SECRET
 
 
-def crawl_tweet_for_user_no_limits(user, count=200, update=True):
+def crawl_tweet_for_user_no_limits(user, count=200, update=False):
+
 
     # initialize a list to hold all the tweepy Tweets
     alltweets = []
-
-    # make initial request for most recent tweets (200 is the maximum allowed count)
-    new_tweets = api.user_timeline(
-        screen_name=user, count=count, tweet_mode="extended", include_entities=False
-    )
-
-    # save most recent tweets
-    alltweets.extend(new_tweets)
-
-    # save the id of the oldest tweet less one
-    oldest = alltweets[-1].id - 1
-
-    # keep grabbing tweets until there are no tweets left to grab
-    while len(new_tweets) > 0:
-        print("getting tweets before %s" % (oldest))
-
-        # all subsiquent requests use the max_id param to prevent duplicates
-        new_tweets = api.user_timeline(
-            screen_name=user,
-            count=count,
-            max_id=oldest,
-            tweet_mode="extended",
-            include_entities=False,
-        )
-
-        # save most recent tweets
-        alltweets.extend(new_tweets)
-
-        # update the id of the oldest tweet less one
-        oldest = alltweets[-1].id - 1
-
-        print("...%s tweets downloaded so far" % (len(alltweets)))
-
     # print(tweets_list)
     tweets = {}
 
     if update:
         user_path = os.path.join("user_profile", "data", user + ".json")
         tweets = json.load(open(user_path, "rb"))
+        since_id = tweets[0].id - 1
+        new_tweets = api.user_timeline(
+            screen_name=user, count=count, since_id=since_id, tweet_mode="extended", include_entities=False
+        )
+        newest = new_tweets[-1].id - 1
+    else:
+        new_tweets = api.user_timeline(
+            screen_name=user, count=count, tweet_mode="extended", include_entities=False
+        )
+        oldest = new_tweets[-1].id - 1
+
+    # save most recent tweets
+    alltweets.extend(new_tweets)
+
+    # keep grabbing tweets until there are no tweets left to grab
+    while len(new_tweets) > 0:
+        print("getting tweets before %s" % (oldest))
+
+        if update:
+            # all subsiquent requests use the max_id param to prevent duplicates
+            new_tweets = api.user_timeline(
+                screen_name=user,
+                count=count,
+                since_id=newest,
+                tweet_mode="extended",
+                include_entities=False,
+            )
+            if len(new_tweets) > 0:
+                newest = new_tweets[-1].id - 1
+        else:
+        # all subsiquent requests use the max_id param to prevent duplicates
+            new_tweets = api.user_timeline(
+                screen_name=user,
+                count=count,
+                max_id=oldest,
+                tweet_mode="extended",
+                include_entities=False,
+            )
+            if len(new_tweets) > 0:
+                oldest = new_tweets[-1].id - 1
+
+        # save most recent tweets
+        alltweets.extend(new_tweets)
+
+        print("...%s tweets downloaded so far" % (len(alltweets)))
 
     for tweet in alltweets:
         # tengo solo testo del tweet
@@ -59,7 +72,7 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=True):
 
 def save_tweer_for_user(user, tweets):
 
-    with open(os.path.join("user_profile", "data", user + ".json"), "w") as outfile:
+    with open(os.path.join("data", "users", user + ".json"), "w") as outfile:
         json.dump(tweets, outfile, indent=3)
 
 
