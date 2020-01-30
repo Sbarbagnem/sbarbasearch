@@ -78,8 +78,8 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        #since="2020-01-29",
-                        include_entities=False,
+                        since="2020-01-22",
+                        include_entities=False
                     )
                 else:
                     new_tweets = api.search(
@@ -88,9 +88,9 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        #since="2020-01-29",
+                        since="2020-01-22",
                         include_entities=False,
-                        since_id=sinceId,
+                        since_id=sinceId
                     )
             else:
                 if not sinceId:
@@ -100,9 +100,9 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        #since="2020-01-29",
+                        since="2020-01-22",
                         include_entities=False,
-                        max_id=str(max_id - 1),
+                        max_id=str(max_id - 1)
                     )
                 else:
                     new_tweets = api.search(
@@ -111,10 +111,10 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        #since="2020-01-29",
+                        since="2020-01-22",
                         include_entities=False,
                         max_id=str(max_id - 1),
-                        since_id=sinceId,
+                        since_id=sinceId
                     )
             if not new_tweets:
                 print("No more tweets found")
@@ -145,7 +145,7 @@ if __name__ == "__main__":
 
     MAX_TWEETS = 200000  # Some arbitrary large number
     TWEET_FOR_QUERY = 100  # this is the max the API permits
-    FILE_TWEETS = "crawling_tweet/tweet.json"  # We'll store the tweets in a JSON file.
+    FILE_TWEETS = "crawling_tweet/tweet_nuovi.json"  # We'll store the tweets in a JSON file.
 
     # leggo se nel json sono già presenti dei tweet
     tweet_list = read_tweet_pre_downladed(FILE_TWEETS)
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     else:
         id_tweet = tweet_list[len(tweet_list) - 1]["id"]
 
-    topics = ['sport -filter:retweets', 'music -filter:retweets', 'cinema -filter:retweets', 'technology -filter:retweets', 'politic -filter:retweets', 'economy -filter:retweets']
+    topics = ['sport -filter:retweets', 'music -filter:retweets', 'cinema -filter:retweets', 'technology -filter:retweets', 'politics -filter:retweets', 'economy -filter:retweets']
 
     # per ogni topic scarico MAX_TWEETS tweet e creo lista di oggetti tweet
     for topic in topics:
@@ -170,6 +170,6 @@ if __name__ == "__main__":
         tweet_list.extend(temp_list)
         print("Ora nella lista ci sono: ", len(tweet_list), " tweets")
 
-    with open(FILE_TWEETS, "w+") as outfile:
+    with open(FILE_TWEETS , "w") as outfile:
         json.dump(tweet_list, outfile, indent=3)
 

@@ -119,6 +119,14 @@ def query_search(query, count_result, user, topic, method, location_search):
                         }
                     }
         )
+    
+    should.append({
+        "distance_feature": {
+          "field": "created_at",
+          "pivot": "7d",
+          "origin": "now"
+        }
+      })
 
     print("SHOULD", should)
 
