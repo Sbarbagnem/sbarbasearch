@@ -14,39 +14,37 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=False):
     if update:
         user_path = os.path.join("data", "users", user + ".json")
         tweets = json.load(open(user_path, "rb"))
-        since_id = int(list(tweets.keys())[0]) - 1
+        first_since_id = int(list(tweets.keys())[0]) - 1
         new_tweets = api.user_timeline(
             screen_name=user,
             count=count,
-            since_id=since_id,
+            since_id=first_since_id,
             tweet_mode="extended",
             include_entities=False,
         )
-        newest = new_tweets[-1].id - 1
     else:
         new_tweets = api.user_timeline(
             screen_name=user, count=count, tweet_mode="extended", include_entities=False
         )
-        oldest = new_tweets[-1].id - 1
+    oldest = new_tweets[-1].id - 1
 
     # save most recent tweets
     alltweets.extend(new_tweets)
 
     # keep grabbing tweets until there are no tweets left to grab
     while len(new_tweets) > 0:
-        print("getting tweets before %s" % (oldest if not update else newest))
+        print("getting tweets before %s" % (oldest))
 
         if update:
             # all subsiquent requests use the max_id param to prevent duplicates
             new_tweets = api.user_timeline(
                 screen_name=user,
                 count=count,
-                since_id=newest,
+                since_id=first_since_id,
+                max_id=oldest,
                 tweet_mode="extended",
                 include_entities=False,
             )
-            if len(new_tweets) > 0:
-                newest = new_tweets[-1].id - 1
         else:
             # all subsiquent requests use the max_id param to prevent duplicates
             new_tweets = api.user_timeline(
@@ -56,8 +54,8 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=False):
                 tweet_mode="extended",
                 include_entities=False,
             )
-            if len(new_tweets) > 0:
-                oldest = new_tweets[-1].id - 1
+        if new_tweets != []:
+            oldest = new_tweets[-1].id - 1
 
         # save most recent tweets
         alltweets.extend(new_tweets)
