@@ -19,6 +19,8 @@ cython = "*"
 twec = {git = "https://github.com/valedica/gensim.git"}
 emoji = "*"
 contractions = "*"
+bigjson = "*"
+pandarallel = "*"
 
 [requires]
 python_version = "3.7"
