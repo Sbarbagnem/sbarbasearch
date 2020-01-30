@@ -6,18 +6,21 @@ from config import USERS_LIST, CONSUMER_KEY, CONSUMER_SECRET
 
 def crawl_tweet_for_user_no_limits(user, count=200, update=False):
 
-
     # initialize a list to hold all the tweepy Tweets
     alltweets = []
     # print(tweets_list)
     tweets = {}
 
     if update:
-        user_path = os.path.join("user_profile", "data", user + ".json")
+        user_path = os.path.join("data", "users", user + ".json")
         tweets = json.load(open(user_path, "rb"))
-        since_id = tweets[0].id - 1
+        since_id = int(list(tweets.keys())[0]) - 1
         new_tweets = api.user_timeline(
-            screen_name=user, count=count, since_id=since_id, tweet_mode="extended", include_entities=False
+            screen_name=user,
+            count=count,
+            since_id=since_id,
+            tweet_mode="extended",
+            include_entities=False,
         )
         newest = new_tweets[-1].id - 1
     else:
@@ -31,7 +34,7 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=False):
 
     # keep grabbing tweets until there are no tweets left to grab
     while len(new_tweets) > 0:
-        print("getting tweets before %s" % (oldest))
+        print("getting tweets before %s" % (oldest if not update else newest))
 
         if update:
             # all subsiquent requests use the max_id param to prevent duplicates
@@ -45,7 +48,7 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=False):
             if len(new_tweets) > 0:
                 newest = new_tweets[-1].id - 1
         else:
-        # all subsiquent requests use the max_id param to prevent duplicates
+            # all subsiquent requests use the max_id param to prevent duplicates
             new_tweets = api.user_timeline(
                 screen_name=user,
                 count=count,
@@ -63,12 +66,13 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=False):
 
     for tweet in alltweets:
         # tengo solo testo del tweet
-        if hasattr(tweet, 'retweeted_status'):
+        if hasattr(tweet, "retweeted_status"):
             tweets[tweet.id_str] = tweet.retweeted_status.full_text
         else:
             tweets[tweet.id_str] = tweet.full_text
 
     return tweets
+
 
 def save_tweer_for_user(user, tweets):
 
@@ -84,7 +88,7 @@ if __name__ == "__main__":
     # per ogni utente nella USERS_LIST scarico gli utlimi tweet publicati
     for user in USERS_LIST:
         print("Scarico tweet di ", user)
-        tweets = crawl_tweet_for_user_no_limits(user, count=10000, update=False)
+        tweets = crawl_tweet_for_user_no_limits(user, count=10000, update=True)
         # print(tweets)
         # salvo tweet in json user.json
         save_tweer_for_user(user, tweets)
