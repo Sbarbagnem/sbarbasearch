@@ -4,7 +4,6 @@ import pickle
 import logging
 import itertools
 import numpy as np
-from tqdm import tqdm
 from config import USERS_LIST
 from gensim.models.phrases import Phrases, Phraser
 from preprocess.tweet_preprocess import TweetPreprocess
@@ -15,7 +14,7 @@ logging.basicConfig(
 
 if __name__ == "__main__":
 
-    sentences = pickle.load(open(os.path.join("data", "query", "tweet.pkl"), "rb"))
+    sentences = pickle.load(open(os.path.join("data", "query", "query.pkl"), "rb"))
 
     for user in USERS_LIST:
         sentences.extend(

@@ -16,7 +16,7 @@ if __name__ == "__main__":
         trigram = Phraser.load(os.path.join("data", "models", "trigram.pkl"))
 
     print("* LOADING QUERY SENTENCES")
-    sentences = pickle.load(open(os.path.join("data", "query", "tweet.pkl"), "rb"))
+    sentences = pickle.load(open(os.path.join("data", "query", "query.pkl"), "rb"))
     if compute_n_grams:
         print("* COMPUTING BIGRAMS/TRIGRAMS")
         sentences = trigram[bigram[sentences]]

@@ -5,7 +5,6 @@ import nltk
 import regex
 import string
 import contractions
-from tqdm import tqdm
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize.casual import TweetTokenizer
