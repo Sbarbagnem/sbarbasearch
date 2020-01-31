@@ -8,10 +8,10 @@ from gensim.models.phrases import Phraser
 from preprocess.tweet_preprocess import TweetPreprocess
 from config import USER_COUNTRY
 
-bigram = Phraser.load(os.path.join("compass_embeddings", "model", "bigram.pkl"))
-trigram = Phraser.load(os.path.join("compass_embeddings", "model", "trigram.pkl"))
+bigram = Phraser.load(os.path.join("data", "models", "bigram.pkl"))
+trigram = Phraser.load(os.path.join("data", "models", "trigram.pkl"))
 query_embeddings = Word2Vec.load(
-    os.path.join("compass_embeddings", "model", "query_tweets.model")
+    os.path.join("data", "models", "tweets.model")
 )
 user_embeddings = {}
 
@@ -34,15 +34,12 @@ def query_search(query, count_result, user, topic, method, location_search):
     if user != "None":
         if method == "bow":
             with open(
-                os.path.join("user_profile", "data", "bow.json")
+                os.path.join("data", "users", "bow.json")
             ) as jsonfile:
-                data = json.load(jsonfile)
+                bow = json.load(jsonfile)
 
-            for bow in data:
-                if list(bow.keys())[0] == user:
-                    # should.extend([{"term": {"text": str(word)}} for word in bow[user]])
-                    str_profile = " ".join(str(word) for word in bow[user])
-                    should.append({"match": {"text": str_profile}})
+            str_profile = " ".join(bow["@" + user])
+            should.append({"match": {"text": str_profile}})
         elif method == "embeddings_mean" or method == "embeddings":
             user_embedding = None
             try:
@@ -50,7 +47,7 @@ def query_search(query, count_result, user, topic, method, location_search):
             except KeyError:
                 user_embeddings[user] = Word2Vec.load(
                     os.path.join(
-                        "compass_embeddings", "model", "@" + user + "_tweets.model"
+                        "data", "models", "@" + user + ".model"
                     )
                 )
                 user_embedding = user_embeddings[user]
@@ -101,7 +98,8 @@ def query_search(query, count_result, user, topic, method, location_search):
         must.append({"term": {"topic": topic}})
         
     # amento rilevnza documenti che hanno country_code uguale a quello dell'utente
-    should.append({"term": {"country": USER_COUNTRY[user]}})
+    if user != 'None':
+        should.append({"term": {"country": USER_COUNTRY[user]}})
 
     # aumento rilevanza dei documenti che sono molto popolari (retweet e like)
     should.append({"rank_feature": {"field": "popularity.retweet","boost": 10}})

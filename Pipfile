@@ -21,6 +21,7 @@ emoji = "*"
 contractions = "*"
 bigjson = "*"
 pandarallel = "*"
+sklearn = "*"
 
 [requires]
 python_version = "3.7"

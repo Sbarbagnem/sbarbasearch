@@ -27,8 +27,8 @@ def search():
 
     lat = request.args.get("lat")
     lon = request.args.get("lon")
-
-    if lat != '' and lon !='':
+    print(lon, lat)
+    if lat is not None and lon is not None:
         location_search = [int(lat),int(lon)]
     else:
         location_search = 'None'
