@@ -1,8 +1,9 @@
 import os
 import logging
+import multiprocessing as mp
 from twec.twec import TWEC
-from gensim.models.word2vec import Word2Vec
 from config import USERS_LIST
+from gensim.models.word2vec import Word2Vec
 
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO
@@ -26,11 +27,11 @@ logging.basicConfig(
                     (same vocabulary)
 """
 aligner = TWEC(
-    size=50,
+    size=56,
     sg=0,
     siter=20,
     diter=20,
-    workers=7,
+    workers=mp.cpu_count(),
     opath=os.path.join("data", "models"),
 )
 aligner.train_compass(
