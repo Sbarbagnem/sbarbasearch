@@ -1,6 +1,7 @@
-from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk
+import os
 import json
+from elasticsearch.helpers import bulk
+from elasticsearch import Elasticsearch
 from indexer.setting_analyzer import MAPPING
 
 
@@ -107,7 +108,7 @@ if __name__ == "__main__":
     NAME_INDEX = "index_twitter"
     # batch to upload n tweet for bulk
     BATCH = 10000
-    PATH_TO_JSON_TWEET = "./crawling_tweet/tweet.json"
+    PATH_TO_JSON_TWEET = os.path.join("data", "query", "query.json")
 
     if index_exist():
         print("Esiste già l'index")
