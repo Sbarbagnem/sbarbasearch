@@ -134,7 +134,7 @@ def get_full_url_pattern():
 
 def get_numbers_pattern():
     return regex.compile(
-        r"(\d+)(?<!#\d+)"
+        r'(?<!#\S*)(\d+)' # only for regex package
     )  # Match numbers only if they're not hashtags
 
 

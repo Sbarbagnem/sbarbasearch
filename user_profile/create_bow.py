@@ -34,8 +34,8 @@ if __name__ == "__main__":
         print("* TF-IDF")
         X = tfidf.fit_transform(user_sentences)
         features = np.array(tfidf.get_feature_names())
-        tfidf_sorting = np.argsort(X.toarray()).flatten()[::-1]
-        top_n = features[tfidf_sorting][:10]
+        X = np.argsort(X.toarray()).flatten()[::-1]
+        top_n = features[X][:10]
         bow[user] = top_n.tolist()
 
     with open(os.path.join("data", "users", "bow.json"), "w") as f:
