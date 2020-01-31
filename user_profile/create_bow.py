@@ -1,58 +1,42 @@
-import pandas as pd
-import json
-
-# from sklearn.feature_extraction.text import TfidfVectorizer
-from twitter_preprocessor import TwitterPreprocessor
 import os
-import re
-from collections import Counter
-
-
-def processing_tweet(sentence):
-    p = TwitterPreprocessor(sentence)
-    p.fully_preprocess()
-    return p.text
-
-
-def word_count(str):
-    # frequenza parole in tweet
-
-    counts = dict()
-    words = str.split()
-
-    for word in words:
-        if word in counts:
-            counts[word] += 1
-        else:
-            counts[word] = 1
-
-    return counts
-
+import time
+import json
+import pickle
+import numpy as np
+from config import USERS_LIST
+from gensim.models.phrases import Phraser
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 if __name__ == "__main__":
 
-    PATH_TWEET_FOR_USER = "./data/"
+    bow = {}
+    compute_n_grams = True
 
-    directory = os.fsencode(PATH_TWEET_FOR_USER)
+    if compute_n_grams:
+        bigram = Phraser.load(os.path.join("data", "models", "bigram.pkl"))
+        trigram = Phraser.load(os.path.join("data", "models", "trigram.pkl"))
 
-    bow = []
+    for user in USERS_LIST:
+        print("* LOADING " + user + " SENTENCES")
+        user_sentences = pickle.load(
+            open(os.path.join("data", "users", user + ".pkl"), "rb")
+        )
+        if compute_n_grams:
+            print("* COMPUTING BIGRAMS/TRIGRAMS")
+            user_sentences = trigram[bigram[user_sentences]]
+        user_sentences = map(lambda sentence: " ".join(sentence), user_sentences)
+        tfidf = TfidfVectorizer(
+            lowercase=False,
+            analyzer="word",
+            tokenizer=lambda x: x.split(),
+            token_pattern=None,
+        )
+        print("* TF-IDF")
+        X = tfidf.fit_transform(user_sentences)
+        features = np.array(tfidf.get_feature_names())
+        tfidf_sorting = np.argsort(X.toarray()).flatten()[::-1]
+        top_n = features[tfidf_sorting][:10]
+        bow[user] = top_n.tolist()
 
-    for file in os.listdir(directory):
-        filename = os.fsdecode(file)
-        if filename.endswith(".json") and not filename.startswith('bow'):
-            user = re.split("@|.json", filename)[1]
-
-            with open(PATH_TWEET_FOR_USER + filename) as jsonfile:
-                tweets = json.load(jsonfile)
-                tweets = " ".join(tweets)
-                tweet_processed = processing_tweet(tweets)
-                words = re.findall(r"\w+", tweet_processed)
-                ten_common_frequency = Counter(words).most_common(10)
-                ten_common = [word[0] for word in ten_common_frequency]
-                temp = {str(user): ten_common}
-                # print(temp)
-                bow.append(temp)
-
-    with open("./data/bow.json", "w") as jsonfile:
-        json.dump(bow, jsonfile, indent=3)
-
+    with open(os.path.join("data", "users", "bow.json"), "w") as f:
+        json.dump(bow, f)
