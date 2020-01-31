@@ -91,7 +91,6 @@ def index_batch(tweets):
                 "retweet": int(tweet["retweet"])+1,
             },
             "country": tweet["country"]
-            #"location": tweet["location"]
         }
         requests.append(request)
 

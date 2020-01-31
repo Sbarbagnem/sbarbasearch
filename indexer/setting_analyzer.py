@@ -21,7 +21,7 @@ MAPPING = {
                     "filter": [
                         "classic",
                         "lowercase",
-                        # "remove_digit_token",
+                        "remove_digit_token",
                         "remove_link_token",
                         "remove_puntuaction",
                         "remove_length_less_two",
@@ -92,9 +92,6 @@ MAPPING = {
                 "type": "keyword",
                 "index": True,
                 "store": True
-            },
-            "location": {
-                "type": "geo_point"
             }
         }
     }
