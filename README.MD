@@ -6,6 +6,9 @@ Group members:
 * Samuele Ventura, ID: 793060
 * Federico Belotti, ID: 808708
 
+The project has been tested on Ubuntu 19.10 and MacOS.  
+If you're using Windows...use Linux!
+
 ## Requirements
 
 In order to use this project, one needs to:
@@ -28,10 +31,27 @@ Follow those instructions to create the workspace:
 * `cd twec; pip install -e .; cd ..` to install TWEC
 * `python requirements_installer.py` to install packages needed to [NLTK](https://www.nltk.org/)
 
-Per poter accedere all'index e al servizio di gestione dell'index è necessario eseguire il comando `docker-compose up -d` nella directory principale del progetto, con cui vengono attivati il servizio elasticsearch e il servizio kibana. I due servizi sono raggiungibili rispetivamente alla pagina localhost:9200 e localhost:5601. Per quanto riguarda elasticsearch nel momento effettivo in cui il servizio è attivo sarà solamente visualizzata una pagina web che indica lo stato di salute del sistema. 
+## Usage
 
-I tweets scaricati sono salvati in un file json raggiungibile al link https://drive.google.com/open?id=1icq1eDQJOfpL4MbOoCItODlFIa7Z1KZf. Dopo aver scaricato i tweet è necessario eseguire il file indexer/indexer.py, che crea l'index e carica i tweet. 
+If you've download a the [data folder](https://drive.google.com/drive/folders/1xKj7u-e2lf5GcJPHhDgBkNyPB70AP4Yv?usp=sharing), then you can directly run the webapp, otherwise you have to download, preprocess and create models for the query and the users tweets.
 
-Nella directory user_profile/data è presente una serie di file json uno per ogni utente su cui è stata costruita una bag of words salvata nel file bow.json
+### Useful commands
 
-Per eseguire la webapp è necessario spostarsi nella in webapp ed eseguire app.py, sarà poi raggiungibile a localhost:5000.
+A **rule of thumb** to run every runnable script in this project is: `python -m folder.script_name [options...]`.  
+Every script you wanna run, **you must run it from the project root**, so if for example you want to run a preprocess stage, from the project root run `python -m preprocess.preprocess --help` to see whats options you have, then run the script with the desired options.  
+Here are listed all the runnble scripts:
+
+* `python -m crawl_tweet.crawl_tweet_query` downloads or updates the query tweets using tweepy API. Run it with `--help` to see all the available options
+* `python -m crawl_tweet.crawl_tweet_users` downloads or updates the users tweets using tweepy API. Run it with `--help` to see all the available options
+* `python -m embeddings.create_twec_data` creates the txt files to train TWEC. Run it with `--help` to see all the available options
+* `python -m embeddings.train_embeddings` trains TWEC models. Run it with `--help` to see all the available options
+* `python -m embeddings.train_phraser` trains bigrams and/or trigrams models. Run it with `--help` to see all the available options
+* `python -m indexer.create_index` creates the index used by [Elasticsearch](https://www.elastic.co/) during the search.
+* `python -m preprocess.preprocess` preprocess the query and the users json files. Run it with `--help` to see all the available options
+* `python -m user_profile.create_bow` creates the users profiles fitting a TD-IDF model. Run it with `--help` to see all the available options
+* `python -m webapp.app` starts the webapp at http://127.0.0.1:5000/
+
+
+If you're running a **Linux-like distro** you better start running `sudo sysctl -w vm.max_map_count=262144`, otherwise Kibana service won't start properly.  
+To start the services up run `docker-compose up -d`, then `python -m indexer.create_index` to create the index, which can be managed at http://localhost:5601/app/kibana.  
+Run the webapp with `python -m webapp.app`.
