@@ -78,7 +78,6 @@ def crawl_tweet_for_topic(topic, id_tweet, sinceId):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        #since="2020-01-22",
                         include_entities=False
                     )
                 else:
@@ -88,7 +87,6 @@ def crawl_tweet_for_topic(topic, id_tweet, sinceId):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        #since="2020-01-22",
                         include_entities=False,
                         since_id=sinceId
                     )
@@ -100,7 +98,6 @@ def crawl_tweet_for_topic(topic, id_tweet, sinceId):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        #since="2020-01-22",
                         include_entities=False,
                         max_id=str(max_id - 1)
                     )
@@ -111,7 +108,6 @@ def crawl_tweet_for_topic(topic, id_tweet, sinceId):
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        #since="2020-01-22",
                         include_entities=False,
                         max_id=str(max_id - 1),
                         since_id=sinceId
@@ -156,7 +152,7 @@ if __name__ == "__main__":
 
     MAX_TWEETS = 30000  # Some arbitrary large number
     TWEET_FOR_QUERY = 100  # this is the max the API permits
-    FILE_TWEETS = "crawling_tweet/query.json"  # We'll store the tweets in a JSON file.
+    FILE_TWEETS = "data/query/query.json"  # We'll store the tweets in a JSON file.
 
     # leggo se nel json sono già presenti dei tweet
     tweet_list = read_tweet_pre_downladed(FILE_TWEETS)
