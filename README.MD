@@ -6,7 +6,7 @@ Group members:
 * Samuele Ventura, ID: 793060
 * Federico Belotti, ID: 808708
 
-The project has been tested on Ubuntu 19.10 and MacOS.  
+The project has been tested on [Pop!_OS](https://system76.com/pop) 19.10 and MacOS.  
 If you're using Windows...use Linux!
 
 ## Requirements
