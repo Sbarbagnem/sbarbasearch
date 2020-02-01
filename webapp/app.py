@@ -25,9 +25,11 @@ def search():
     topic = request.args.get("topic")
     method = request.args.get("method")
 
+    bigrams = bool(request.args.get("bigrams"))
+    trigrams = bool(request.args.get("trigrams"))
+
     lat = request.args.get("lat")
     lon = request.args.get("lon")
-    print(lon, lat)
     if lat is not None and lon is not None:
         location_search = [int(lat), int(lon)]
     else:
@@ -35,14 +37,26 @@ def search():
 
     res = query_search(
         query,
-        count_result=count,
+        count=count,
         user=user,
         topic=topic,
         method=method,
+        bigrams=bigrams,
+        trigrams=trigrams,
         location_search=location_search,
     )
 
-    return render_template("index.html", tweets=res, search_term=query)
+    return render_template(
+        "index.html",
+        tweets=res,
+        query=query,
+        count=count,
+        user=user,
+        topic=topic,
+        method=method,
+        bigrams="true" if bigrams else "false",
+        trigrams="true" if trigrams else "false",
+    )
 
 
 if __name__ == "__main__":

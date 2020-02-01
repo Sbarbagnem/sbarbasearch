@@ -69,58 +69,86 @@
 
 
 <form id="search-bar" action="/search">
-  <div class="form-group">
-    <input class="form-control" type="text" placeholder="Type your query here..." name="search"
-      value="{{ search_term }}">
+  <div class="row mb-3">
+    <div class="form-group col-md-12">
+      <input class="form-control" type="text" placeholder="Type your query here..." name="search"
+        value="{{ query }}">
+    </div>
   </div>
-  <div class="form-group">
-    <label for="results">How many results do you want?</label>
-    <select id="results" class="form-control" name="number_result">
-      <option value="5" selected>5</option>
-      <option value="100">100</option>
-      <option value="200">200</option>
-      <option value="300">300</option>
-    </select>
+  <div class="row mb-3">
+    <div class="form-group col-md-4">
+      <label for="results">How many results do you want?</label>
+      <!-- <select id="results" class="form-control" name="number_result">
+        <option value="5" selected>5</option>
+        <option value="100">100</option>
+        <option value="200">200</option>
+        <option value="300">300</option>
+      </select> -->
+      <input type="number" id="results" class="form-control" name="number_result" value="{{ count }}">
+    </div>
+    <div class="form-group col-md-4">
+      <label for="profile">Wanna a particular profile?</label>
+      <select id="profile" class="form-control" name="profile">
+        <option value="None" selected>None</option>
+        <option value="AaronDonald97">Aaron Donald</option>
+        <option value="BorisJohnson">Boris Johnson</option>
+        <option value="elonmusk">Elon Musk</option>
+        <option value="EmmaWatson">Emma Watson</option>
+        <option value="GreenDay">Green Day</option>
+        <option value="IBM">IBM</option>
+        <option value="JosephEStiglitz">Joseph Stiglitz</option>
+        <option value="MarcusRashford">Marcus Rashford</option>
+        <option value="MartinGarrix">Martin Garrix</option>
+        <option value="BarackObama">Barack Obama</option>
+        <option value="VancityReynolds">Rayan Reynolds</option>
+        <option value="Yunus_Centre">Yunus Centre</option>
+      </select>
+    </div>
+    <div class="form-group col-md-4">
+      <label for="topic">Wanna select a specific topic?</label>
+      <select id="topic" class="form-control" name="topic">
+        <option value="None" selected>None</option>
+        <option value="sport">sport</option>
+        <option value="music">music</option>
+        <option value="cinema">cinema</option>
+        <option value="technology">technology</option>
+        <option value="politic">politic</option>
+        <option value="economy">economy</option>
+      </select>
+    </div>
   </div>
-  <div class="form-group">
-    <label for="profile">Wanna a particular profile?</label>
-    <select id="profile" class="form-control" name="profile">
-      <option value="None" selected>None</option>
-      <option value="AaronDonald97">Aaron Donald</option>
-      <option value="BorisJohnson">Boris Johnson</option>
-      <option value="elonmusk">Elon Musk</option>
-      <option value="EmmaWatson">Emma Watson</option>
-      <option value="GreenDay">Green Day</option>
-      <option value="IBM">IBM</option>
-      <option value="JosephEStiglitz">Joseph Stiglitz</option>
-      <option value="MarcusRashford">Marcus Rashford</option>
-      <option value="MartinGarrix">Martin Garrix</option>
-      <option value="BarackObama">Barack Obama</option>
-      <option value="VancityReynolds">Rayan Reynolds</option>
-      <option value="Yunus_Centre">Yunus Centre</option>
-    </select>
+  <div class="row mb-3">
+    <div class="form-group col-md-4">
+      <label for="method">Select the method to encapsulate a user profile</label>
+      <select id="method" class="form-control" name="method">
+        <option value="bow" selected>Bag of words</option>
+        <option value="embeddings">Embeddings</option>
+        <option value="embeddings_mean">Embeddings with mean</option>
+      </select>
+    </div>
+    <div id="checks" class="col-md-4">
+      <label for="checks">Whether to compute bigrams or trigrams on the query</label>
+      <div class="row">
+        <div class="form-group col-md-6">
+          <input type="checkbox" name="bigrams" id="bigrams" value="True">
+          <label for="bigrams">
+            Compute bigrams
+          </label>
+        </div>
+        <div class="form-group col-md-6">
+          <input type="checkbox" name="trigrams" id="trigrams" value="True">
+          <label for="trigrams">
+            Compute trigrams
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="form-group">
-    <label for="topic">Wanna select a specific topic?</label>
-    <select id="topic" class="form-control" name="topic">
-      <option value="None" selected>None</option>
-      <option value="sport">sport</option>
-      <option value="music">music</option>
-      <option value="cinema">cinema</option>
-      <option value="technology">technology</option>
-      <option value="politic">politic</option>
-      <option value="economy">economy</option>
-    </select>
+  <div class="row mb-3">
+    <div class="form-group col-md-3">
+      <button class="btn btn-primary" type="submit">Search</button>
+    </div>
   </div>
-  <div class="form-group">
-    <label for="method">Select the method to encapsulate a user profile</label>
-    <select id="method" class="form-control" name="method">
-      <option value="bow" selected>Bag of words</option>
-      <option value="embeddings">Embeddings</option>
-      <option value="embeddings_mean">Embeddings with mean</option>
-    </select>
-  </div>
-  <button class="btn btn-primary" type="submit"><i class="fa fa-search">Search</i></button>
 </form>
 
 <div>
@@ -136,12 +164,17 @@
       <p3>{{tweet._source.text}}</p3>
       <br>
       <p3>Retweets: {{tweet._source.popularity.retweet}}</p3>
+      <p3 style="margin-left: 1%">Likes: {{tweet._source.popularity.like}}</p3>
       <br>
-      <p3>Likes: {{tweet._source.popularity.like}}</p3>
+      <p3>Topic: {{tweet._source.topic}}</p3>
       <br>
-      <p3>{{tweet._source.topic}}</p3> 
+      {% if tweet._source.country %}
+        <p3>Country: {{tweet._source.country}}</p3>
+      {% else %}
+        <p3>Country: N/A</p3>
+      {% endif %}
       <br>
-      <p3>{{tweet._source.country}}</p3>
+      <p3>RSV: {{tweet._score}}</p3>
       <br>
       <a href="{{tweet._source.tweet_url}}">Link to original tweet</a>
     </div>

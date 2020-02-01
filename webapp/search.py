@@ -10,13 +10,11 @@ from config import USER_COUNTRY
 
 bigram = Phraser.load(os.path.join("data", "models", "bigram.pkl"))
 trigram = Phraser.load(os.path.join("data", "models", "trigram.pkl"))
-query_embeddings = Word2Vec.load(
-    os.path.join("data", "models", "query.model")
-)
+query_embeddings = Word2Vec.load(os.path.join("data", "models", "query.model"))
 user_embeddings = {}
 
 
-def query_search(query, count_result, user, topic, method, location_search):
+def query_search(query, count, user, topic, method, bigrams, trigrams, location_search):
     client = Elasticsearch()
 
     # termini che possono comparire
@@ -33,9 +31,7 @@ def query_search(query, count_result, user, topic, method, location_search):
 
     if user != "None":
         if method == "bow":
-            with open(
-                os.path.join("data", "users", "bow.json")
-            ) as jsonfile:
+            with open(os.path.join("data", "users", "bow.json")) as jsonfile:
                 bow = json.load(jsonfile)
 
             str_profile = " ".join(bow["@" + user])
@@ -46,13 +42,16 @@ def query_search(query, count_result, user, topic, method, location_search):
                 user_embedding = user_embeddings[user]
             except KeyError:
                 user_embeddings[user] = Word2Vec.load(
-                    os.path.join(
-                        "data", "models", "@" + user + ".model"
-                    )
+                    os.path.join("data", "models", "@" + user + ".model")
                 )
                 user_embedding = user_embeddings[user]
 
-            preprocessed_query = trigram[bigram[TweetPreprocess.preprocess(query)]]
+            preprocessed_query = TweetPreprocess.preprocess(query)
+            if bigrams:
+                preprocessed_query = bigram[preprocessed_query]
+            if trigrams:
+                preprocessed_query = trigram[preprocessed_query]
+             
             vectors = []
             shoulds = []
             for token in preprocessed_query:
@@ -84,38 +83,28 @@ def query_search(query, count_result, user, topic, method, location_search):
                 shoulds = [word.split("_") for word in shoulds]
                 shoulds = list(itertools.chain(*shoulds))
                 # Keep first 10 elements keeping order
-            should.append(
-                {
-                    "match": {
-                        "text": " ".join(shoulds)
-                    }
-                }
-            )
+            should.append({"match": {"text": " ".join(shoulds)}})
 
     # possibile filtraggio a priori per topic
     if topic != "None":
         must.append({"term": {"topic": topic}})
-        
+
     # amento rilevnza documenti che hanno country_code uguale a quello dell'utente
-    if user != 'None':
+    if user != "None":
         should.append({"term": {"country": USER_COUNTRY[user]}})
 
     # aumento rilevanza dei documenti che sono molto popolari (retweet e like)
-    should.append({"rank_feature": {"field": "popularity.retweet","boost": 10}})
-    should.append({"rank_feature": {"field": "popularity.like","boost": 10}})
-    
-    should.append({
-        "distance_feature": {
-          "field": "created_at",
-          "pivot": "5d",
-          "origin": "now"
-        }
-      })
+    should.append({"rank_feature": {"field": "popularity.retweet", "boost": 10}})
+    should.append({"rank_feature": {"field": "popularity.like", "boost": 10}})
+
+    should.append(
+        {"distance_feature": {"field": "created_at", "pivot": "5d", "origin": "now"}}
+    )
 
     print("SHOULD", should)
 
     q = {"must": must, "should": should}
-    body = {"size": count_result, "query": {"function_score": {"query": {"bool": q}}}}
+    body = {"size": count, "query": {"function_score": {"query": {"bool": q}}}}
     res = client.search(index="index_twitter", body=body)
     res = res["hits"]["hits"]
     # print('Ho trovato: ', len(res), ' tweet')
