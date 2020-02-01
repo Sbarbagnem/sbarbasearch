@@ -1,6 +1,7 @@
 import os
 import json
 import tweepy
+import argparse
 from config import USERS_LIST, CONSUMER_KEY, CONSUMER_SECRET
 
 
@@ -15,7 +16,7 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=False):
     if update:
         user_path = os.path.join("data", "users", user + ".json")
         old_tweet = json.load(open(user_path, "rb"))
-        first_since_id = int(list(old_tweet.keys())[0]) 
+        first_since_id = int(list(old_tweet.keys())[0])
         new_tweets = api.user_timeline(
             screen_name=user,
             count=count,
@@ -73,7 +74,7 @@ def crawl_tweet_for_user_no_limits(user, count=200, update=False):
             tweets[tweet.id_str] = tweet.full_text
 
     merge_tweets = {**tweets, **old_tweet}
-    
+
     return merge_tweets
 
 
@@ -81,6 +82,18 @@ def save_tweer_for_user(user, tweets):
 
     with open(os.path.join("data", "users", user + ".json"), "w") as outfile:
         json.dump(tweets, outfile, indent=3)
+
+
+args = argparse.ArgumentParser(description="Crawl tweets for the users")
+args.add_argument(
+    "--count", help="How many tweets to crawl", default=500, type=int,
+)
+args.add_argument(
+    "--update",
+    help="Whether to update the current dictionary of users tweets",
+    action="store_true",
+)
+args = args.parse_args()
 
 
 if __name__ == "__main__":
@@ -91,7 +104,9 @@ if __name__ == "__main__":
     # per ogni utente nella USERS_LIST scarico gli utlimi tweet publicati
     for user in USERS_LIST:
         print("Scarico tweet di ", user)
-        tweets = crawl_tweet_for_user_no_limits(user, count=10000, update=True)
+        tweets = crawl_tweet_for_user_no_limits(
+            user, count=args.count, update=args.update
+        )
         # print(tweets)
         # salvo tweet in json user.json
         save_tweer_for_user(user, tweets)

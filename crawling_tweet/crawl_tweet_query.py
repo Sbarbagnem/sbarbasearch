@@ -1,6 +1,8 @@
-import tweepy
+import os
 import json
+import tweepy
 from config import CONSUMER_KEY, CONSUMER_SECRET
+
 
 def process_tweet(tweet, id, topic):
     """
@@ -28,17 +30,19 @@ def process_tweet(tweet, id, topic):
     temp_tweet["like"] = int(tweet.favorite_count)
     temp_tweet["retweet"] = int(tweet.retweet_count)
     temp_tweet["profile_image_url"] = tweet.user.profile_image_url_https
-    temp_tweet["tweet_url"] = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
+    temp_tweet[
+        "tweet_url"
+    ] = f"https://twitter.com/{tweet.user.screen_name}/status/{tweet.id}"
     if tweet.place is not None:
         temp_tweet["country"] = tweet.place.country_code
     else:
-        temp_tweet["country"] = ''
+        temp_tweet["country"] = ""
     if tweet.coordinates is not None:
-        temp_tweet['location'] = tweet.coordinates
+        temp_tweet["location"] = tweet.coordinates
     else:
-        temp_tweet['location'] = []
+        temp_tweet["location"] = []
 
-    temp_tweet['topic'] = topic.split()[0]
+    temp_tweet["topic"] = topic.split()[0]
 
     return temp_tweet
 
@@ -50,7 +54,6 @@ def read_tweet_pre_downladed(filepath):
         data = json.load(json_file)
 
     # create a list of id
-
     return data
 
 
@@ -79,7 +82,7 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         lang="en",
                         result_type="mixed",
                         since="2020-01-22",
-                        include_entities=False
+                        include_entities=False,
                     )
                 else:
                     new_tweets = api.search(
@@ -90,7 +93,7 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         result_type="mixed",
                         since="2020-01-22",
                         include_entities=False,
-                        since_id=sinceId
+                        since_id=sinceId,
                     )
             else:
                 if not sinceId:
@@ -102,7 +105,7 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         result_type="mixed",
                         since="2020-01-22",
                         include_entities=False,
-                        max_id=str(max_id - 1)
+                        max_id=str(max_id - 1),
                     )
                 else:
                     new_tweets = api.search(
@@ -114,7 +117,7 @@ def crawl_tweet_for_topic(topic, id_tweet):
                         since="2020-01-22",
                         include_entities=False,
                         max_id=str(max_id - 1),
-                        since_id=sinceId
+                        since_id=sinceId,
                     )
             if not new_tweets:
                 print("No more tweets found")
@@ -145,7 +148,7 @@ if __name__ == "__main__":
 
     MAX_TWEETS = 200000  # Some arbitrary large number
     TWEET_FOR_QUERY = 100  # this is the max the API permits
-    FILE_TWEETS = "crawling_tweet/tweet_nuovi.json"  # We'll store the tweets in a JSON file.
+    FILE_TWEETS = os.path.join("data", "query", "query.json")
 
     # leggo se nel json sono già presenti dei tweet
     tweet_list = read_tweet_pre_downladed(FILE_TWEETS)
@@ -159,7 +162,14 @@ if __name__ == "__main__":
     else:
         id_tweet = tweet_list[len(tweet_list) - 1]["id"]
 
-    topics = ['sport -filter:retweets', 'music -filter:retweets', 'cinema -filter:retweets', 'technology -filter:retweets', 'politics -filter:retweets', 'economy -filter:retweets']
+    topics = [
+        "sport -filter:retweets",
+        "music -filter:retweets",
+        "cinema -filter:retweets",
+        "technology -filter:retweets",
+        "politics -filter:retweets",
+        "economy -filter:retweets",
+    ]
 
     # per ogni topic scarico MAX_TWEETS tweet e creo lista di oggetti tweet
     for topic in topics:
@@ -170,6 +180,6 @@ if __name__ == "__main__":
         tweet_list.extend(temp_list)
         print("Ora nella lista ci sono: ", len(tweet_list), " tweets")
 
-    with open(FILE_TWEETS , "w") as outfile:
+    with open(FILE_TWEETS, "w") as outfile:
         json.dump(tweet_list, outfile, indent=3)
 

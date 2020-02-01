@@ -1,23 +1,18 @@
 MAPPING = {
-    "settings" : {
-        "index" : {
-            "number_of_shards" : 1,
-            "number_of_replicas" : 0,
+    "settings": {
+        "index": {
+            "number_of_shards": 1,
+            "number_of_replicas": 0,
             "similarity": {
-                "my_similarity": {
-                    "type": "LMJelinekMercer",
-                    "lambda": "0.2"
-                }
-            }
+                "my_similarity": {"type": "LMJelinekMercer", "lambda": "0.2"}
+            },
         },
         "analysis": {
             "analyzer": {
                 "custom_analyzer": {
                     "type": "custom",
                     "tokenizer": "whitespace",
-                    "char_filter": [
-                        "html_strip"
-                    ],
+                    "char_filter": ["html_strip"],
                     "filter": [
                         "classic",
                         "lowercase",
@@ -25,74 +20,45 @@ MAPPING = {
                         "remove_link_token",
                         "remove_puntuaction",
                         "remove_length_less_two",
-                        "porter_stem"
-                    ]
+                        "porter_stem",
+                    ],
                 }
             },
-            "filter":{
+            "filter": {
                 "remove_digit_token": {
-                    "type": "pattern_replace", # remove token made og only number
+                    "type": "pattern_replace",  # remove token made og only number
                     "pattern": "^[0-9]+",
-                    "replacement": ""                   
+                    "replacement": "",
                 },
                 "remove_link_token": {
-                    "type": "pattern_replace", # remove link
+                    "type": "pattern_replace",  # remove link
                     "pattern": "^https?:\/\/.*[\r\n]*",
-                    "replacement": ""
+                    "replacement": "",
                 },
                 "remove_puntuaction": {
-                    "type": "pattern_replace", # remove non alpha-numeric in token but not @ # 
+                    "type": "pattern_replace",  #  remove non alpha-numeric in token but not @ #
                     "pattern": "[^0-9A-Za-z@#]",
-                    "replacement": ""
+                    "replacement": "",
                 },
-                "remove_length_less_two": {
-                    "type": "length",
-                    "min": 2
-                }
-            }
-        }
+                "remove_length_less_two": {"type": "length", "min": 2},
+            },
+        },
     },
     "mappings": {
         "properties": {
-            "created_at": {
-                "type": "date",
-                "index": True,
-                "store" : True
-            },
+            "created_at": {"type": "date", "index": True, "store": True},
             "text": {
                 "type": "text",
-                "store" : True,
-                "analyzer" : "custom_analyzer",
-                "similarity": "my_similarity"
+                "store": True,
+                "analyzer": "custom_analyzer",
+                "similarity": "my_similarity",
             },
-            "user": {
-                "type": "text",
-                "store" : True,
-                "index": False
-            },
-            "popularity": {
-                "type": "rank_features"
-            },
-            "profile_image": {
-                "type": "keyword",
-                "index": False,
-                "store" : True
-            },
-            "tweet_url": {
-                "type": "keyword",
-                "index": False,
-                "store" : True
-            },
-            "topic": {
-                "type": "keyword",
-                "index": True,
-                "store": True
-            },
-            "country": {
-                "type": "keyword",
-                "index": True,
-                "store": True
-            }
+            "user": {"type": "text", "store": True, "index": False},
+            "popularity": {"type": "rank_features"},
+            "profile_image": {"type": "keyword", "index": False, "store": True},
+            "tweet_url": {"type": "keyword", "index": False, "store": True},
+            "topic": {"type": "keyword", "index": True, "store": True},
+            "country": {"type": "keyword", "index": True, "store": True},
         }
-    }
+    },
 }

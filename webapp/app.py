@@ -17,7 +17,7 @@ def search():
 
     query = request.args.get("search")
     count = request.args.get("number_result")
-    
+
     # se settato aggiungo bow del profilo alla query
     user = request.args.get("profile")
 
@@ -29,13 +29,17 @@ def search():
     lon = request.args.get("lon")
     print(lon, lat)
     if lat is not None and lon is not None:
-        location_search = [int(lat),int(lon)]
+        location_search = [int(lat), int(lon)]
     else:
-        location_search = 'None'
+        location_search = "None"
 
     res = query_search(
-        query, count_result=count, user=user, topic=topic, method=method,
-        location_search=location_search
+        query,
+        count_result=count,
+        user=user,
+        topic=topic,
+        method=method,
+        location_search=location_search,
     )
 
     return render_template("index.html", tweets=res, search_term=query)

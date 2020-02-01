@@ -1,5 +1,6 @@
 import os
 import logging
+import argparse
 import multiprocessing as mp
 from twec.twec import TWEC
 from config import USERS_LIST
@@ -8,6 +9,30 @@ from gensim.models.word2vec import Word2Vec
 logging.basicConfig(
     format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO
 )
+
+args = argparse.ArgumentParser(
+    description="Learn a TWEC model with compass and temporal slices. It takes as input a txt with all the vocabs, compass.txt and a .txt file for every slices, in this case one for the query and one for every user"
+)
+args.add_argument(
+    "--size",
+    help="Size of the embeddings. A multiple of 4 is preferred",
+    default=56,
+    type=int,
+)
+args.add_argument(
+    "--sg",
+    help="Whether to use the CBOW (0) or the SKIP-GRAM (1) model of Word2Vec. Default CBOW",
+    default=0,
+    type=int,
+)
+args.add_argument(
+    "--iter",
+    help="Number of epochs of training for the compass and for the slices: --iter 20 30 it will train the compass model for 20 epochs and the slices for 30 epochs",
+    nargs="+",
+    type=int,
+    default=[20, 20],
+)
+args = args.parse_args()
 
 """
 :param size: Number of dimensions. Default is 100.
@@ -26,21 +51,20 @@ logging.basicConfig(
                     'if \"copy\", temporal models are initiliazed as a copy of the context model
                     (same vocabulary)
 """
-aligner = TWEC(
-    size=56,
-    sg=0,
-    siter=20,
-    diter=20,
-    workers=mp.cpu_count(),
-    opath=os.path.join("data", "models"),
-)
-aligner.train_compass(
-    os.path.join("data", "twec", "compass.txt"), overwrite=True
-)  # keep an eye on the overwrite behaviour
-aligner.train_slice(
-    os.path.join("data", "twec", "tweets.txt"), save=True
-)
-for user in USERS_LIST:
-    aligner.train_slice(
-        os.path.join("data", "twec", user + ".txt"), save=True
+
+if __name__ == "__main__":
+
+    aligner = TWEC(
+        size=args.size,
+        sg=args.sg,
+        siter=args.iter[0],
+        diter=args.iter[1],
+        workers=mp.cpu_count() - 1,
+        opath=os.path.join("data", "models"),
     )
+    aligner.train_compass(
+        os.path.join("data", "twec", "compass.txt"), overwrite=True
+    )  # keep an eye on the overwrite behaviour
+    aligner.train_slice(os.path.join("data", "twec", "query.txt"), save=True)
+    for user in USERS_LIST:
+        aligner.train_slice(os.path.join("data", "twec", user + ".txt"), save=True)

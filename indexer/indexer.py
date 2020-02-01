@@ -87,11 +87,11 @@ def index_batch(tweets):
             "tweet_url": tweet["tweet_url"],
             "topic": tweet["topic"],
             "popularity": {
-                "followers_count": int(tweet["followers_count"])+1,
-                "like": int(tweet["like"])+1,
-                "retweet": int(tweet["retweet"])+1,
+                "followers_count": int(tweet["followers_count"]) + 1,
+                "like": int(tweet["like"]) + 1,
+                "retweet": int(tweet["retweet"]) + 1,
             },
-            "country": tweet["country"]
+            "country": tweet["country"],
         }
         requests.append(request)
 

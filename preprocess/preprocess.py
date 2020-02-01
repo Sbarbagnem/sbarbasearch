@@ -12,18 +12,14 @@ from pandarallel import pandarallel
 from preprocess.tweet_preprocess import TweetPreprocess
 
 
-def preprocess(
-    query_tweets_path, users_tweets_dir, save=True, return_preprocessed=False
-):
-    pandarallel.initialize(nb_workers=mp.cpu_count() - 1, progress_bar=True)
+def preprocess(save=True, return_preprocessed=False, workers=mp.cpu_count() - 1):
+    pandarallel.initialize(nb_workers=workers, progress_bar=True)
     lengths = [0]
-    query_tweets_dir = os.path.dirname(query_tweets_path)
-    query_tweets_filename = os.path.basename(query_tweets_path).split('.')[0]
-    load_filenames = [query_tweets_path] + [
-        os.path.join(users_tweets_dir, user + ".json") for user in USERS_LIST
+    load_filenames = [os.path.join("data", "query", "query.json")] + [
+        os.path.join("data", "users", user + ".json") for user in USERS_LIST
     ]
-    save_filenames = [os.path.join(query_tweets_dir, query_tweets_filename + ".pkl")] + [
-        os.path.join(users_tweets_dir, user + ".pkl") for user in USERS_LIST
+    save_filenames = [os.path.join("data", "query", "query.pkl")] + [
+        os.path.join("data", "users", user + ".pkl") for user in USERS_LIST
     ]
     print("* LOADING QUERY TWEETS")
     tweets = pandas.read_json(
@@ -69,17 +65,15 @@ def preprocess(
 
 
 def preprocess_memory_oriented(
-    query_tweets_path, users_tweets_dir, save=True, return_preprocessed=False
+    save=True, return_preprocessed=False, workers=mp.cpu_count() - 1
 ):
-    pandarallel.initialize(nb_workers=mp.cpu_count() - 1, progress_bar=True)
+    pandarallel.initialize(nb_workers=workers, progress_bar=True)
 
-    query_tweets_dir = os.path.dirname(query_tweets_path)
-    query_tweets_filename = os.path.basename(query_tweets_path).split('.')[0]
-    load_filenames = [query_tweets_path] + [
-        os.path.join(users_tweets_dir, user + ".json") for user in USERS_LIST
+    load_filenames = [os.path.join("data", "query", "query.json")] + [
+        os.path.join("data", "users", user + ".json") for user in USERS_LIST
     ]
-    save_filenames = [os.path.join(query_tweets_dir, query_tweets_filename + ".pkl")] + [
-        os.path.join(users_tweets_dir, user + ".pkl") for user in USERS_LIST
+    save_filenames = [os.path.join("data", "query", "query.pkl")] + [
+        os.path.join("data", "users", user + ".pkl") for user in USERS_LIST
     ]
     if return_preprocessed:
         preprocessed = [0] * len(load_filenames)
@@ -128,18 +122,6 @@ def preprocess_memory_oriented(
 
 args = argparse.ArgumentParser()
 args.add_argument(
-    "--query-tweets-path",
-    help="Path to the query tweets json file",
-    default=os.path.join("data", "query", "query.json"),
-    action="store",
-)
-args.add_argument(
-    "--users-tweets-dir",
-    help="Path to the dir containing the users tweets json files. Caution: it will load all the json files in the specified dir",
-    default=os.path.join("data", "users"),
-    action="store",
-)
-args.add_argument(
     "--mem-oriented",
     help="Whether to preprocess files in a memory-oriented manner",
     action="store_true",
@@ -150,18 +132,19 @@ args.add_argument(
     help="Whether to save the preprocessed files. If true, it saves files as list of lists in a pickle format. It saves in the same dir where the json are",
     action="store_true",
 )
+args.add_argument(
+    "-w",
+    "--workers",
+    help="How many cores to use during the preprocessing. Default system-cores - 1",
+    default=mp.cpu_count() - 1,
+    type=int
+)
 args = args.parse_args()
 
 if __name__ == "__main__":
     save = args.save
-    query_tweets_path = args.query_tweets_path
-    users_tweets_dir = args.users_tweets_dir
     if args.mem_oriented:
-        preprocess_memory_oriented(
-            query_tweets_path, users_tweets_dir, save=save, return_preprocessed=False
-        )
+        preprocess_memory_oriented(save=save, return_preprocessed=False, workers=args.workers)
     else:
-        preprocess(
-            query_tweets_path, users_tweets_dir, save=save, return_preprocessed=False
-        )
+        preprocess(save=save, return_preprocessed=False, workers=args.workers)
 
