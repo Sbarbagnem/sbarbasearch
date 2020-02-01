@@ -26,6 +26,7 @@ Follow those instructions to create the workspace:
 * `conda env create --name sbarbasearch --file=environment.yml`
 * `conda activate sbarbasearch`
 * `cd twec; pip install -e .; cd ..` to install TWEC
+* `python requirements_installer.py` to install packages needed to [NLTK](https://www.nltk.org/)
 
 Per poter accedere all'index e al servizio di gestione dell'index è necessario eseguire il comando `docker-compose up -d` nella directory principale del progetto, con cui vengono attivati il servizio elasticsearch e il servizio kibana. I due servizi sono raggiungibili rispetivamente alla pagina localhost:9200 e localhost:5601. Per quanto riguarda elasticsearch nel momento effettivo in cui il servizio è attivo sarà solamente visualizzata una pagina web che indica lo stato di salute del sistema. 
 
