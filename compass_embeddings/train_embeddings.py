@@ -32,6 +32,13 @@ args.add_argument(
     type=int,
     default=[20, 20],
 )
+args.add_argument(
+    "-w",
+    "--workers",
+    help="How many cores to use during the preprocessing. Default system-cores - 1",
+    default=mp.cpu_count() - 1,
+    type=int,
+)
 args = args.parse_args()
 
 """
@@ -59,7 +66,7 @@ if __name__ == "__main__":
         sg=args.sg,
         siter=args.iter[0],
         diter=args.iter[1],
-        workers=mp.cpu_count() - 1,
+        workers=args.workers,
         opath=os.path.join("data", "models"),
     )
     aligner.train_compass(

@@ -12,7 +12,9 @@ from pandarallel import pandarallel
 from preprocess.tweet_preprocess import TweetPreprocess
 
 
-def preprocess(save=True, return_preprocessed=False, workers=mp.cpu_count() - 1):
+def preprocess(
+    save=True, return_preprocessed=False, workers=mp.cpu_count() - 1, tokenizer="nltk"
+):
     pandarallel.initialize(nb_workers=workers, progress_bar=True)
     lengths = [0]
     load_filenames = [os.path.join("data", "query", "query.json")] + [
@@ -44,7 +46,7 @@ def preprocess(save=True, return_preprocessed=False, workers=mp.cpu_count() - 1)
     init = time.time()
     print("* PREPROCESSING")
     tweets["text"] = tweets.parallel_apply(
-        lambda x: TweetPreprocess.preprocess(x.text, return_list=False), axis=1
+        lambda x: TweetPreprocess.preprocess(x.text, return_list=False, tokenizer=tokenizer), axis=1
     )
     print("* ELAPSED TIME: {:.4f}".format(time.time() - init))
     if return_preprocessed:
@@ -65,7 +67,7 @@ def preprocess(save=True, return_preprocessed=False, workers=mp.cpu_count() - 1)
 
 
 def preprocess_memory_oriented(
-    save=True, return_preprocessed=False, workers=mp.cpu_count() - 1
+    save=True, return_preprocessed=False, workers=mp.cpu_count() - 1, tokenizer="nltk"
 ):
     pandarallel.initialize(nb_workers=workers, progress_bar=True)
 
@@ -103,7 +105,7 @@ def preprocess_memory_oriented(
         print("* PREPROCESSING")
         init = time.time()
         tweets["text"] = tweets.parallel_apply(
-            lambda x: TweetPreprocess.preprocess(x.text, return_list=False), axis=1
+            lambda x: TweetPreprocess.preprocess(x.text, return_list=False, tokenizer=tokenizer), axis=1
         )
         print("* ELAPSED TIME: {:.4f}".format(time.time() - init))
 
@@ -137,14 +139,31 @@ args.add_argument(
     "--workers",
     help="How many cores to use during the preprocessing. Default system-cores - 1",
     default=mp.cpu_count() - 1,
-    type=int
+    type=int,
+)
+args.add_argument(
+    "-t",
+    "--tokenizer",
+    help="Which type of tokenizer to use: twitter or nltk",
+    default="nltk",
+    type=str,
 )
 args = args.parse_args()
 
 if __name__ == "__main__":
     save = args.save
     if args.mem_oriented:
-        preprocess_memory_oriented(save=save, return_preprocessed=False, workers=args.workers)
+        preprocess_memory_oriented(
+            save=save,
+            return_preprocessed=False,
+            workers=args.workers,
+            tokenizer=args.tokenizer,
+        )
     else:
-        preprocess(save=save, return_preprocessed=False, workers=args.workers)
+        preprocess(
+            save=save,
+            return_preprocessed=False,
+            workers=args.workers,
+            tokenizer=args.tokenizer,
+        )
 

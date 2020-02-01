@@ -11,7 +11,7 @@ from config import USER_COUNTRY
 bigram = Phraser.load(os.path.join("data", "models", "bigram.pkl"))
 trigram = Phraser.load(os.path.join("data", "models", "trigram.pkl"))
 query_embeddings = Word2Vec.load(
-    os.path.join("data", "models", "tweets.model")
+    os.path.join("data", "models", "query.model")
 )
 user_embeddings = {}
 
@@ -68,7 +68,6 @@ def query_search(query, count_result, user, topic, method, location_search):
                         [mean_vector], topn=10
                     )
                 ]
-                should.append({"match": {"text": " ".join(shoulds)}})
             elif method == "embeddings" and vectors != []:
                 for vector in vectors:
                     shoulds.extend(
@@ -85,13 +84,13 @@ def query_search(query, count_result, user, topic, method, location_search):
                 shoulds = [word.split("_") for word in shoulds]
                 shoulds = list(itertools.chain(*shoulds))
                 # Keep first 10 elements keeping order
-                should.append(
-                    {
-                        "match": {
-                            "text": " ".join(shoulds)
-                        }
+            should.append(
+                {
+                    "match": {
+                        "text": " ".join(shoulds)
                     }
-                )
+                }
+            )
 
     # possibile filtraggio a priori per topic
     if topic != "None":
