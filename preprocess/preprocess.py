@@ -36,12 +36,15 @@ def preprocess(
         if not only_query
         else []
     )
-    print("* LOADING QUERY TWEETS")
-    tweets = pandas.read_json(
-        load_filenames[0], orient="columns", convert_axes=False, convert_dates=False,
-    )[["text"]]
-    lengths.append(len(tweets))
-    for i in range(1, len(load_filenames)):
+    tweets = pandas.DataFrame()
+    if only_query or not(only_query or only_users):
+        print("* LOADING QUERY TWEETS")
+        tweets = pandas.read_json(
+            load_filenames[0], orient="columns", convert_axes=False, convert_dates=False,
+        )[["text"]]
+        lengths.append(len(tweets))
+    init = 1 if only_query or not(only_query or only_users) else 0
+    for i in range(init, len(load_filenames)):
         print("* LOADING " + USERS_LIST[i - 1] + " TWEETS")
         users = (
             pandas.read_json(
@@ -110,7 +113,7 @@ def preprocess_memory_oriented(
         preprocessed = [0] * len(load_filenames)
 
     for i in range(len(load_filenames)):
-        if i == 0:
+        if i == 0 and (only_query or not(only_query or only_users)):
             print("* LOADING QUERY TWEETS")
             tweets = pandas.read_json(
                 load_filenames[i],
