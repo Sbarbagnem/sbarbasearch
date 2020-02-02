@@ -65,7 +65,7 @@ if __name__ == "__main__":
             threshold=args.trigrams_thr,
         )
     )
-    
+
     bigram.save(os.path.join("data", "models", "bigram.pkl"))
     trigram.save(os.path.join("data", "models", "trigram.pkl"))
 

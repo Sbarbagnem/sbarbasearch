@@ -13,7 +13,6 @@ dependencies:
   - pip
   - python==3.7.6
   - regex
-  - six
   - tweepy
   - pip:
     - contractions

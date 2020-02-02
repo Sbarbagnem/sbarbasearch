@@ -68,4 +68,3 @@ if __name__ == "__main__":
     with open(os.path.join("data", "twec", "compass.txt"), "w+") as f:
         print("* SAVING COMPASS TXT")
         f.write(sentences)
-

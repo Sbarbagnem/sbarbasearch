@@ -38,7 +38,7 @@ def process_tweet(tweet, id, topic):
     if tweet.place is not None:
         temp_tweet["country"] = tweet.place.country_code
     else:
-        temp_tweet["country"] = ''
+        temp_tweet["country"] = ""
 
     temp_tweet["topic"] = topic.split()[0]
 
@@ -64,7 +64,7 @@ def crawl_tweet_for_topic(topic, id_tweet, sinceId):
     if sinceId != {}:
         sinceId = str(sinceId)
     else:
-        sinceId = '0'
+        sinceId = "0"
 
     max_id = 0
 
@@ -75,14 +75,14 @@ def crawl_tweet_for_topic(topic, id_tweet, sinceId):
     while tweetCount < MAX_TWEETS:
         try:
             if max_id <= 0:
-                if sinceId == '0':
+                if sinceId == "0":
                     new_tweets = api.search(
                         q=searchQuery,
                         count=TWEET_FOR_QUERY,
                         tweet_mode="extended",
                         lang="en",
                         result_type="mixed",
-                        include_entities=False
+                        include_entities=False,
                     )
                 else:
                     new_tweets = api.search(
@@ -95,7 +95,7 @@ def crawl_tweet_for_topic(topic, id_tweet, sinceId):
                         since_id=sinceId,
                     )
             else:
-                if sinceId == '0':
+                if sinceId == "0":
                     new_tweets = api.search(
                         q=searchQuery,
                         count=TWEET_FOR_QUERY,
@@ -133,17 +133,19 @@ def crawl_tweet_for_topic(topic, id_tweet, sinceId):
 
     return id_tweet, tweet_list
 
+
 def find_last_id(tweets):
 
     since_id = {}
 
     df = pd.DataFrame([tweet for tweet in tweets])
-    df = df[['tweet_id', 'created_at', 'topic']]
+    df = df[["tweet_id", "created_at", "topic"]]
 
-    df = df.sort_values('created_at').groupby('topic').last()
-    max_id = max(df['tweet_id'].tolist())
+    df = df.sort_values("created_at").groupby("topic").last()
+    max_id = max(df["tweet_id"].tolist())
 
     return max_id
+
 
 if __name__ == "__main__":
 
@@ -183,11 +185,13 @@ if __name__ == "__main__":
     # per ogni topic scarico MAX_TWEETS tweet e creo lista di oggetti tweet
     for topic in topics:
         print("Cerco tweets per il topic: ", topic)
-        last_id, temp_list = crawl_tweet_for_topic(topic=topic, id_tweet=id_tweet, sinceId=since_id)
+        last_id, temp_list = crawl_tweet_for_topic(
+            topic=topic, id_tweet=id_tweet, sinceId=since_id
+        )
         id_tweet = last_id
         print("Scaricati ", len(temp_list), " per il topic ", topic)
         tweet_list.extend(temp_list)
-        
+
     print("Ora nella lista ci sono: ", len(tweet_list), " tweets")
 
     with open(FILE_TWEETS, "w") as outfile:

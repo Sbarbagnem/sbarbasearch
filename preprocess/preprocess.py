@@ -13,16 +13,29 @@ from preprocess.tweet_preprocess import TweetPreprocess
 
 
 def preprocess(
-    save=True, return_preprocessed=False, workers=mp.cpu_count() - 1, tokenizer="nltk"
+    only_query=False,
+    only_users=False,
+    save=True,
+    return_preprocessed=False,
+    workers=mp.cpu_count() - 1,
+    tokenizer="nltk",
 ):
     pandarallel.initialize(nb_workers=workers, progress_bar=True)
     lengths = [0]
-    load_filenames = [os.path.join("data", "query", "query.json")] + [
-        os.path.join("data", "users", user + ".json") for user in USERS_LIST
-    ]
-    save_filenames = [os.path.join("data", "query", "query.pkl")] + [
-        os.path.join("data", "users", user + ".pkl") for user in USERS_LIST
-    ]
+    load_filenames = (
+        [os.path.join("data", "query", "query.json")] if not only_users else []
+    ) + (
+        [os.path.join("data", "users", user + ".json") for user in USERS_LIST]
+        if not only_query
+        else []
+    )
+    save_filenames = (
+        [os.path.join("data", "query", "query.pkl")] if not only_users else []
+    ) + (
+        [os.path.join("data", "users", user + ".pkl") for user in USERS_LIST]
+        if not only_query
+        else []
+    )
     print("* LOADING QUERY TWEETS")
     tweets = pandas.read_json(
         load_filenames[0], orient="columns", convert_axes=False, convert_dates=False,
@@ -46,7 +59,10 @@ def preprocess(
     init = time.time()
     print("* PREPROCESSING")
     tweets["text"] = tweets.parallel_apply(
-        lambda x: TweetPreprocess.preprocess(x.text, return_list=False, tokenizer=tokenizer), axis=1
+        lambda x: TweetPreprocess.preprocess(
+            x.text, return_list=False, tokenizer=tokenizer
+        ),
+        axis=1,
     )
     print("* ELAPSED TIME: {:.4f}".format(time.time() - init))
     if return_preprocessed:
@@ -67,16 +83,29 @@ def preprocess(
 
 
 def preprocess_memory_oriented(
-    save=True, return_preprocessed=False, workers=mp.cpu_count() - 1, tokenizer="nltk"
+    only_query=False,
+    only_users=False,
+    save=True,
+    return_preprocessed=False,
+    workers=mp.cpu_count() - 1,
+    tokenizer="nltk",
 ):
     pandarallel.initialize(nb_workers=workers, progress_bar=True)
 
-    load_filenames = [os.path.join("data", "query", "query.json")] + [
-        os.path.join("data", "users", user + ".json") for user in USERS_LIST
-    ]
-    save_filenames = [os.path.join("data", "query", "query.pkl")] + [
-        os.path.join("data", "users", user + ".pkl") for user in USERS_LIST
-    ]
+    load_filenames = (
+        [os.path.join("data", "query", "query.json")] if not only_users else []
+    ) + (
+        [os.path.join("data", "users", user + ".json") for user in USERS_LIST]
+        if not only_query
+        else []
+    )
+    save_filenames = (
+        [os.path.join("data", "query", "query.pkl")] if not only_users else []
+    ) + (
+        [os.path.join("data", "users", user + ".pkl") for user in USERS_LIST]
+        if not only_query
+        else []
+    )
     if return_preprocessed:
         preprocessed = [0] * len(load_filenames)
 
@@ -105,7 +134,10 @@ def preprocess_memory_oriented(
         print("* PREPROCESSING")
         init = time.time()
         tweets["text"] = tweets.parallel_apply(
-            lambda x: TweetPreprocess.preprocess(x.text, return_list=False, tokenizer=tokenizer), axis=1
+            lambda x: TweetPreprocess.preprocess(
+                x.text, return_list=False, tokenizer=tokenizer
+            ),
+            axis=1,
         )
         print("* ELAPSED TIME: {:.4f}".format(time.time() - init))
 
@@ -122,8 +154,17 @@ def preprocess_memory_oriented(
         return preprocessed
 
 
-args = argparse.ArgumentParser()
+args = argparse.ArgumentParser(
+    description="Preprocess tweets and save them to pickle files for future computation. For every tweet it create a list of preprocessed tokens"
+)
 args.add_argument(
+    "-q", "--only-query", help="Preprocess only the query tweets", action="store_true",
+)
+args.add_argument(
+    "-u", "--only-users", help="Preprocess only the users tweets", action="store_true",
+)
+args.add_argument(
+    "-m",
     "--mem-oriented",
     help="Whether to preprocess files in a memory-oriented manner",
     action="store_true",
@@ -152,8 +193,14 @@ args = args.parse_args()
 
 if __name__ == "__main__":
     save = args.save
+    only_query = args.only_query
+    only_users = args.only_users
+    if only_query and only_users:
+        raise Exception("Only one of -q or -u must be used")
     if args.mem_oriented:
         preprocess_memory_oriented(
+            only_query=only_query,
+            only_users=only_users,
             save=save,
             return_preprocessed=False,
             workers=args.workers,
@@ -161,9 +208,10 @@ if __name__ == "__main__":
         )
     else:
         preprocess(
+            only_query=only_query,
+            only_users=only_users,
             save=save,
             return_preprocessed=False,
             workers=args.workers,
             tokenizer=args.tokenizer,
         )
-

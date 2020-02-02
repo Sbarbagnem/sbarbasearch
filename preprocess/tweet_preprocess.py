@@ -124,16 +124,14 @@ def get_full_url_pattern():
         # port number (optional)
         u"(?::\d{2,5})?"
         # resource path (optional)
-        u"(?:[/?#]\S*)?"
-        # u"$",
-        ,
+        u"(?:[/?#]\S*)?",  # u"$",
         flags=re.I,
     )
 
 
 def get_numbers_pattern():
     return regex.compile(
-        r'(?<!#\S*)(\d+)' # only for regex package
+        r"(?<!#\S*)(\d+)"  # only for regex package
     )  # Match numbers only if they're not hashtags
 
 
@@ -142,7 +140,8 @@ def get_uppercase_pattern():
 
 
 def get_non_alphanum_pattern():
-    return re.compile(r"\W+")  # Match everything that is not contained in [a-zA-Z0-9_]
+    # Match everything that is not contained in [a-zA-Z0-9_]
+    return re.compile(r"\W+")
 
 
 class TweetPreprocess:
