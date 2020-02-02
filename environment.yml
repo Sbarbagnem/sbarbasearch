@@ -4,17 +4,17 @@ channels:
   - anaconda
   - defaults
 dependencies:
-  - cython=0.29.14
-  - numpy=1.18.1
-  - elasticsearch=7.0.4
-  - flask=1.1.1
-  - nltk=3.4.5
-  - pandas=1.0.0
-  - pip=20.0.2
-  - python=3.7.6
-  - regex=2019.12.9
-  - six=1.14.0
-  - tweepy=3.8.0
+  - cython
+  - numpy
+  - elasticsearch
+  - flask
+  - nltk
+  - pandas
+  - pip
+  - python
+  - regex
+  - six
+  - tweepy
   - pip:
     - contractions==0.0.24
     - emoji==0.5.4
