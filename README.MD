@@ -33,7 +33,9 @@ Follow those instructions to create the workspace:
 
 ## Usage
 
-If you've download a the [data folder](https://drive.google.com/drive/folders/1xKj7u-e2lf5GcJPHhDgBkNyPB70AP4Yv?usp=sharing), then you can directly run the webapp, otherwise you have to download, preprocess and create models for the query and the users tweets.
+If you're running a **Linux-like distro** you better start running `sudo sysctl -w vm.max_map_count=262144`, otherwise Kibana service won't start properly.    
+When you've downloaded the [data folder](https://drive.google.com/drive/folders/1xKj7u-e2lf5GcJPHhDgBkNyPB70AP4Yv?usp=sharing) and unpacked it in the project root, you can start the services up running `docker-compose up -d`, then `python -m indexer.create_index` to create the index, which can be managed at http://localhost:5601/app/kibana.  
+Run the webapp with `python -m webapp.app` and browse to http://127.0.0.1:5000/.
 
 ### Useful commands
 
@@ -50,8 +52,3 @@ Here are listed all the runnble scripts:
 * `python -m preprocess.preprocess` preprocess the query and the users json files. Run it with `--help` to see all the available options
 * `python -m user_profile.create_bow` creates the users profiles fitting a TD-IDF model. Run it with `--help` to see all the available options
 * `python -m webapp.app` starts the webapp at http://127.0.0.1:5000/
-
-
-If you're running a **Linux-like distro** you better start running `sudo sysctl -w vm.max_map_count=262144`, otherwise Kibana service won't start properly.  
-To start the services up run `docker-compose up -d`, then `python -m indexer.create_index` to create the index, which can be managed at http://localhost:5601/app/kibana.  
-Run the webapp with `python -m webapp.app` and browse to http://127.0.0.1:5000/.
