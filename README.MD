@@ -3,8 +3,8 @@
 Information retrieval project: develop a Twitter search engine with presonalized search.   
 Group members:
 
-* Samuele Ventura, ID: 793060
-* Federico Belotti, ID: 808708
+* Samuele Ventura, ID: 793060,  email: s.ventura6@campus.unimib.it
+* Federico Belotti, ID: 808708, email: f.belotti8@campus.unimib.it
 
 The project has been tested on [Pop!_OS](https://system76.com/pop) 19.10 and MacOS 10.15.2.  
 If you're using Windows...use Linux!
