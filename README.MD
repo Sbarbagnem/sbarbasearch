@@ -54,4 +54,4 @@ Here are listed all the runnble scripts:
 
 If you're running a **Linux-like distro** you better start running `sudo sysctl -w vm.max_map_count=262144`, otherwise Kibana service won't start properly.  
 To start the services up run `docker-compose up -d`, then `python -m indexer.create_index` to create the index, which can be managed at http://localhost:5601/app/kibana.  
-Run the webapp with `python -m webapp.app`.
+Run the webapp with `python -m webapp.app` and browse to http://127.0.0.1:5000/.

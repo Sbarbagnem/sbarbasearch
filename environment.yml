@@ -11,13 +11,13 @@ dependencies:
   - nltk
   - pandas
   - pip
-  - python
+  - python==3.7.6
   - regex
   - six
   - tweepy
   - pip:
-    - contractions==0.0.24
-    - emoji==0.5.4
-    - pandarallel==1.4.5
+    - contractions
+    - emoji
+    - pandarallel
     - git+https://github.com/valedica/gensim.git
 
