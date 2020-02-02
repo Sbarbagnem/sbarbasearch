@@ -7,6 +7,7 @@ import string
 import contractions
 from nltk import word_tokenize
 from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize.casual import TweetTokenizer
 
 MIN_YEAR = 1900
@@ -158,9 +159,11 @@ class TweetPreprocess:
     twitter_reserved_words_pattern = get_twitter_reserved_words_pattern()
     uppercase_pattern = get_uppercase_pattern()
     url_pattern = get_url_pattern()
-    whitespace_trans = str.maketrans(string.punctuation, " " * len(string.punctuation))
-    non_whitespace_trans = str.maketrans("", "", string.punctuation)
+    punct = string.punctuation + '\u2014'
+    whitespace_trans = str.maketrans(punct, " " * len(punct))
+    non_whitespace_trans = str.maketrans("", "", punct)
     stop_words = set(stopwords.words("english"))
+    lemmatizer = WordNetLemmatizer()
 
     @classmethod
     def preprocess(cls, tweet, tokenizer="nltk", verbose=False, return_list=True):
@@ -190,6 +193,7 @@ class TweetPreprocess:
             print(tokens)
         for token in tokens:
             token = token.lower()
+            token = cls.lemmatizer.lemmatize(token)
             if not (
                 token == "rt"
                 or token in cls.stop_words

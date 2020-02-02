@@ -56,7 +56,7 @@ if __name__ == "__main__":
         )
     )
 
-    print("* LEARNING BIGRAMS MODEL")
+    print("* LEARNING TRIGRAMS MODEL")
     trigram = Phraser(
         Phrases(
             bigram[sentences],

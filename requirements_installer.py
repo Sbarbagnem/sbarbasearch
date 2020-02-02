@@ -6,6 +6,7 @@ class RequirementsInstaller:
     def download_nltk_dependencies(self):
         nltk.download("stopwords")
         nltk.download("punkt")
+        nltk.download("wordnet")
         return self
 
     def download_spacy_dependencies(self):
