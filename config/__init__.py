@@ -10,6 +10,7 @@ USERS_LIST = [
     "@elonmusk",
     "@IBM",
     "@BarackObama",
+    "@realDonaldTrump",
     "@BorisJohnson",
     "@Yunus_Centre",
     "@JosephEStiglitz",
