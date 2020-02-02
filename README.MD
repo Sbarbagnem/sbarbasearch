@@ -33,6 +33,7 @@ Follow those instructions to create the workspace:
 * Clone the TWEC repository with `git clone https://github.com/valedica/twec.git`, needed to train a particular version of the Temporal Word Embeddings. For more information https://github.com/valedica/twec
 * `conda env create --name sbarbasearch --file=environment.yml`
 * `conda activate sbarbasearch`
+* `conda update --all`
 * `cd twec; pip install -e .; cd ..` to install TWEC
 * `python requirements_installer.py` to install packages needed to [NLTK](https://www.nltk.org/)
 
