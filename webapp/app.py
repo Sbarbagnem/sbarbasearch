@@ -35,7 +35,7 @@ def search():
     else:
         location_search = "None"
 
-    res = query_search(
+    res, should = query_search(
         query,
         count=count,
         user=user,
@@ -50,6 +50,7 @@ def search():
         "index.html",
         tweets=res,
         query=query,
+        should=should,
         count=count,
         user=user,
         topic=topic,

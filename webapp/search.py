@@ -109,4 +109,4 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
     res = res["hits"]["hits"]
     # print('Ho trovato: ', len(res), ' tweet')
 
-    return res
+    return res, should[0]["match"]["text"]

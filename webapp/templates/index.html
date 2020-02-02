@@ -1,78 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- <style>
-  #search-bar {
-    display: flex;
-    margin: 10% 10%;
-  }
-
-  #search-bar input {
-    width: 100%;
-    padding: 10px;
-  }
-
-  #search-bar button {
-    margin-left: 15px;
-  }
-
-  .bulk-results {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .search {
-    margin: 0px 10px 20px 10px;
-    padding: 20px;
-    background: #fafaff;
-  }
-
-  .search-header {
-    height: 40px;
-  }
-
-  .search-term {
-    font-weight: bold;
-    color: #000;
-    text-decoration: none;
-  }
-
-  .search-results {
-    display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-auto-rows: 150px;
-    grid-gap: 20px;
-  }
-
-  .product {
-    display: block;
-    color: #333;
-    text-decoration: none;
-  }
-
-  .product-image {
-    max-width: 100px;
-    max-height: 100px;
-    margin-bottom: 10px;
-  }
-
-  .product-info {
-    height: 54px;
-    overflow: hidden;
-  }
-
-  .product-name {
-    font-size: 10px;
-    margin-right: 10px;
-  }
-</style> -->
-
 
 <form id="search-bar" action="/search">
   <div class="row mb-3">
     <div class="form-group col-md-12">
-      <input class="form-control" type="text" placeholder="Type your query here..." name="search"
-        value="{{ query }}">
+      <input class="form-control" type="text" placeholder="Type your query here..." name="search" value="{{ query }}">
     </div>
   </div>
   <div class="row mb-3">
@@ -150,7 +83,13 @@
     </div>
   </div>
 </form>
-
+<div class="row mb-3">
+  <div class="col-md-12">
+    {% if should %}
+    <p>Query expanded with: {{ should }}</p>
+    {% endif %}
+  </div>
+</div>
 <div>
   {% if tweets|length > 0 %}
   {% for tweet in tweets%}
@@ -169,9 +108,9 @@
       <p3>Topic: {{tweet._source.topic}}</p3>
       <br>
       {% if tweet._source.country %}
-        <p3>Country: {{tweet._source.country}}</p3>
+      <p3>Country: {{tweet._source.country}}</p3>
       {% else %}
-        <p3>Country: N/A</p3>
+      <p3>Country: N/A</p3>
       {% endif %}
       <br>
       <p3>RSV: {{tweet._score}}</p3>
