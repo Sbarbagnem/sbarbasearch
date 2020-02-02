@@ -28,6 +28,7 @@ USER_COUNTRY = {
     'MartinGarrix': 'NL',
     'BarackObama': 'US',
     'VancityReynolds': 'CA',
+    'realDonaldTrump': 'US',
     'Yunus_Centre': 'BD'
 }
 
