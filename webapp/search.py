@@ -17,6 +17,7 @@ user_embeddings = {}
 def query_search(query, count, user, topic, method, bigrams, trigrams, location_search):
     client = Elasticsearch()
 
+    expans = False
     # termini che possono comparire
     # mettiamo quelli del profilo utente
     # nel caso ci siano aumenta lo score del documento
@@ -89,6 +90,7 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
                 shoulds = list(itertools.chain(*shoulds))
                 # Keep first 10 elements keeping order
             should.append({"match": {"text": " ".join(shoulds)}})
+            expans = True
 
     # possibile filtraggio a priori per topic
     if topic != "None":
@@ -99,19 +101,49 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
         should.append({"term": {"country": USER_COUNTRY[user]}})
 
     # aumento rilevanza dei documenti che sono molto popolari (retweet e like)
-    should.append({"rank_feature": {"field": "popularity.retweet", "boost": 10}})
-    should.append({"rank_feature": {"field": "popularity.like", "boost": 10}})
+    #should.append({"rank_feature": {"field": "popularity.retweet", "boost": 5}})
+    #should.append({"rank_feature": {"field": "popularity.like", "boost": 5}})
 
     should.append(
-        {"distance_feature": {"field": "created_at", "pivot": "5d", "origin": "now"}}
+        {"distance_feature": {"field": "created_at", "pivot": "5d", "origin": "now", "boost": 5}}
     )
 
     print("SHOULD", should)
 
     q = {"must": must, "should": should}
-    body = {"size": count, "query": {"function_score": {"query": {"bool": q}}}}
+    body = {"size": count, 
+            "query": {
+                "function_score": {
+                    "query": {
+                        "bool": q
+                    },
+                    "functions": [
+                        {
+                        "field_value_factor": {
+                            "field": "like",
+                            "factor": 1.2,
+                            "modifier": "sqrt",
+                            "missing": 1
+                        }
+                        },
+                        {
+                        "field_value_factor": {
+                            "field": "retweet",
+                            "factor": 1.5,
+                            "modifier": "sqrt",
+                            "missing": 1
+                        }
+                        }
+                    ],
+                    "score_mode": "avg"
+                }
+            }
+        }
     res = client.search(index="index_twitter", body=body)
     res = res["hits"]["hits"]
     # print('Ho trovato: ', len(res), ' tweet')
 
-    return res, should[0]["match"]["text"]
+    if expans:
+        return res, should[0]["match"]["text"]
+    else:
+        return res, " "
