@@ -58,8 +58,6 @@ MAPPING = {
                 "similarity": "my_similarity",
             },
             "user": {"type": "text", "store": True, "index": False},
-            #"popularity": {"type": "rank_features"},
-            #"followers_count": {"type": "text", "store": True, "index": False},
             "like": {"type": "integer", "store": True, "index": True},
             "retweet": {"type": "integer", "store": True, "index": True},
             "profile_image": {"type": "keyword", "index": False, "store": True},
