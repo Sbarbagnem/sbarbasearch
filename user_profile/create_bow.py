@@ -18,7 +18,7 @@ args.add_argument(
     "-t", "--trigrams", help="Whether to compute trigrams", action="store_true",
 )
 args.add_argument(
-    "-o", "--only-tf", help="Whether to compute only the term frequency", action="store_true",
+    "--only-tf", help="Whether to compute only the term frequency", action="store_true",
 )
 args.add_argument(
     "--top-n",
@@ -27,30 +27,6 @@ args.add_argument(
     type=int,
 )
 args = args.parse_args()
-
-def extract_topn_from_vector(feature_names, sorted_items, topn=10):
-    """get the feature names and tf-idf score of top n items"""
-    
-    #use only topn items from vector
-    sorted_items = sorted_items[:topn]
-
-    score_vals = []
-    feature_vals = []
-
-    for idx, score in sorted_items:
-        fname = feature_names[idx]
-        
-        #keep track of feature name and its corresponding score
-        score_vals.append(round(score, 3))
-        feature_vals.append(feature_names[idx])
-
-    #create a tuples of feature,score
-    #results = zip(feature_vals,score_vals)
-    results= {}
-    for idx in range(len(feature_vals)):
-        results[feature_vals[idx]]=score_vals[idx]
-    
-    return results
 
 if __name__ == "__main__":
 
@@ -96,7 +72,9 @@ if __name__ == "__main__":
             freqs = zip(tf.get_feature_names(), X.sum(axis=0).tolist()[0])
         freqs = sorted(freqs, key=lambda x: -x[1])
         bow[user] = [freqs[i][0] for i in range(args.top_n)]
-        
-    opath = os.path.join("data", "users", "bow_tf.json" if args.only_tf else "bow_tfidf.json")
+
+    opath = os.path.join(
+        "data", "users", "bow_tf.json" if args.only_tf else "bow_tfidf.json"
+    )
     with open(opath, "w") as f:
         json.dump(bow, f)
