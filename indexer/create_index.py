@@ -4,13 +4,6 @@ from elasticsearch.helpers import bulk
 from elasticsearch import Elasticsearch
 from indexer.setting_analyzer import MAPPING
 
-'''"popularity": {
-    "followers_count": int(tweet["followers_count"]) + 1,
-    "like": int(tweet["like"]) + 1,
-    "retweet": int(tweet["retweet"]) + 1,
-},'''
-
-
 def index_exist():
     return client.indices.exists(index=NAME_INDEX)
 
