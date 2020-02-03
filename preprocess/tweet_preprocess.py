@@ -10,7 +10,7 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize.casual import TweetTokenizer
 
-MIN_YEAR = 1900
+MIN_YEAR = 1800
 MAX_YEAR = 2100
 
 
@@ -131,9 +131,10 @@ def get_full_url_pattern():
 
 
 def get_numbers_pattern():
-    return regex.compile(
-        r"(?<!#\S*)(\d+)"  # only for regex package
-    )  # Match numbers only if they're not hashtags
+    # return regex.compile(
+    #     r"(?<!#\S*)(\d+)"  # only for regex package
+    # )  # Match numbers only if they're not hashtags
+    return re.compile(r'\b(\d+)\b')
 
 
 def get_uppercase_pattern():
@@ -159,19 +160,24 @@ class TweetPreprocess:
     twitter_reserved_words_pattern = get_twitter_reserved_words_pattern()
     uppercase_pattern = get_uppercase_pattern()
     url_pattern = get_url_pattern()
-    punct = string.punctuation + '\u2014'
+    punct = string.punctuation + "\u2014"
     whitespace_trans = str.maketrans(punct, " " * len(punct))
     non_whitespace_trans = str.maketrans("", "", punct)
     stop_words = set(stopwords.words("english"))
+    nltk_tokenize = word_tokenize
+    twitter_tokenize = TweetTokenizer().tokenize
     lemmatizer = WordNetLemmatizer()
 
     @classmethod
     def preprocess(cls, tweet, tokenizer="nltk", verbose=False, return_list=True):
         tokens = []
         yeah_tokens = []
-        tokenizer = word_tokenize
-        if tokenizer == "twitter":
-            tokenizer = TweetTokenizer().tokenize
+        if tokenizer == "nltk":
+            tokenizer = cls.nltk_tokenize
+        elif tokenizer == "twitter":
+            tokenizer = cls.twitter_tokenize
+        else:
+            raise Exception('Tokenizer must be one of "twitter" or "nltk"')
         if verbose:
             print("* BEFORE")
             print(tweet)
@@ -195,10 +201,14 @@ class TweetPreprocess:
             token = token.lower()
             token = cls.lemmatizer.lemmatize(token)
             if not (
-                token == "rt"
-                or token in cls.stop_words
-                or cls.non_alphanum_pattern.match(token)
+                token in cls.stop_words
+                or not token.isalnum()
                 or (token.isalpha() and len(token) < 2)
+                or token == "rt"
+                or token == "via"
+                or token == "fav"
+                or all(s in "ah" for s in token)
+                or all(s in "lo" for s in token)
             ):
                 yeah_tokens.append(token)
         if return_list:

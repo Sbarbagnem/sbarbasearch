@@ -62,8 +62,8 @@ def preprocess(
     init = time.time()
     print("* PREPROCESSING")
     tweets["text"] = tweets.parallel_apply(
-        lambda x: TweetPreprocess.preprocess(
-            x.text, return_list=False, tokenizer=tokenizer
+        lambda x: tweet_preprocess.preprocess(
+            x.text, return_list=False, tokenizer=tokenizer,
         ),
         axis=1,
     )
@@ -94,7 +94,6 @@ def preprocess_memory_oriented(
     tokenizer="nltk",
 ):
     pandarallel.initialize(nb_workers=workers, progress_bar=True)
-
     load_filenames = (
         [os.path.join("data", "query", "query.json")] if not only_users else []
     ) + (
@@ -137,7 +136,7 @@ def preprocess_memory_oriented(
         print("* PREPROCESSING")
         init = time.time()
         tweets["text"] = tweets.parallel_apply(
-            lambda x: TweetPreprocess.preprocess(
+            lambda x: tweet_preprocess.preprocess(
                 x.text, return_list=False, tokenizer=tokenizer
             ),
             axis=1,
@@ -195,6 +194,7 @@ args.add_argument(
 args = args.parse_args()
 
 if __name__ == "__main__":
+    tweet_preprocess = TweetPreprocess()
     save = args.save
     only_query = args.only_query
     only_users = args.only_users
