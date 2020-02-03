@@ -33,6 +33,36 @@ args.add_argument(
     default=[20, 20],
 )
 args.add_argument(
+    "--ns",
+    help="Number of negative sampling examples. Default is 10, min is 1.",
+    type=int,
+    default=10,
+)
+args.add_argument(
+    "--window",
+    help="Size of the context window (left and right). Default is 5 (5 left + 5 right)",
+    type=int,
+    default=5,
+)
+args.add_argument(
+    "--alpha",
+    help="Initial learning rate. Default is 0.025.",
+    type=float,
+    default=0.025,
+)
+args.add_argument(
+    "--min-count",
+    help="Min frequency for words over the entire corpus. Default is 5",
+    type=int,
+    default=5,
+)
+args.add_argument(
+    "--init-mode",
+    help='If \"hidden\" (default), initialize temporal models with hidden embeddings of the context; if \"both\", initilize also the word embeddings; if \"copy\", temporal models are initiliazed as a copy of the context model (same vocabulary)',
+    default="hidden",
+    type=str,
+)
+args.add_argument(
     "-w",
     "--workers",
     help="How many cores to use during the preprocessing. Default system-cores - 1",
@@ -66,6 +96,11 @@ if __name__ == "__main__":
         sg=args.sg,
         siter=args.iter[0],
         diter=args.iter[1],
+        ns=args.ns,
+        window=args.window,
+        alpha=args.alpha,
+        min_count=args.min_count,
+        init_mode=args.init_mode,
         workers=args.workers,
         opath=os.path.join("data", "models"),
     )
