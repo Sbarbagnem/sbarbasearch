@@ -42,6 +42,7 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
 
             str_profile = " ".join(bow["@" + user])
             should.append({"match": {"text": str_profile}})
+            expans = True
         elif method == "embeddings_mean" or method == "embeddings":
             user_embedding = None
             try:
@@ -141,6 +142,7 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
         }
     res = client.search(index="index_twitter", body=body)
     res = res["hits"]["hits"]
+    print(res)
     # print('Ho trovato: ', len(res), ' tweet')
 
     if expans:
