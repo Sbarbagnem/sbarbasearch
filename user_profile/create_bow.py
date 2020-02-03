@@ -18,9 +18,6 @@ args.add_argument(
     "-t", "--trigrams", help="Whether to compute trigrams", action="store_true",
 )
 args.add_argument(
-    "--only-tf", help="Whether to compute only the term frequency", action="store_true",
-)
-args.add_argument(
     "--top-n",
     help="Take the first n element of the ordered TF-IDF matrix",
     default=10,
@@ -50,31 +47,18 @@ if __name__ == "__main__":
             if args.trigrams:
                 user_sentences = trigram[user_sentences]
         user_sentences = map(lambda sentence: " ".join(sentence), user_sentences)
-        if not args.only_tf:
-            tfidf = TfidfVectorizer(
-                lowercase=False,
-                analyzer="word",
-                tokenizer=lambda x: x.split(),
-                token_pattern=None,
-            )
-            print("* TF-IDF")
-            X = tfidf.fit_transform(user_sentences)
-            freqs = zip(tfidf.get_feature_names(), X.max(axis=0).toarray()[0])
-        else:
-            tf = CountVectorizer(
-                lowercase=False,
-                analyzer="word",
-                tokenizer=lambda x: x.split(),
-                token_pattern=None,
-            )
-            print("* TF")
-            X = tf.fit_transform(user_sentences)
-            freqs = zip(tf.get_feature_names(), X.sum(axis=0).tolist()[0])
+        tf = CountVectorizer(
+            lowercase=False,
+            analyzer="word",
+            tokenizer=lambda x: x.split(),
+            token_pattern=None,
+        )
+        print("* TF")
+        X = tf.fit_transform(user_sentences)
+        freqs = zip(tf.get_feature_names(), X.sum(axis=0).tolist()[0])
         freqs = sorted(freqs, key=lambda x: -x[1])
         bow[user] = [freqs[i][0] for i in range(args.top_n)]
 
-    opath = os.path.join(
-        "data", "users", "bow_tf.json" if args.only_tf else "bow_tfidf.json"
-    )
+    opath = os.path.join("data", "users", "bow_tf.json")
     with open(opath, "w") as f:
         json.dump(bow, f)
