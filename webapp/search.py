@@ -30,8 +30,13 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
     must.append({"query_string": {"query": query, "default_field": "text"}})
 
     if user != "None":
-        if method == "bow":
-            with open(os.path.join("data", "users", "bow.json")) as jsonfile:
+        if method.startswith("bow"):
+            ipath = os.path.join(
+                "data",
+                "users",
+                "bow_tf.json" if method == "bow_tf" else "bow_tfidf.json",
+            )
+            with open(ipath) as jsonfile:
                 bow = json.load(jsonfile)
 
             str_profile = " ".join(bow["@" + user])
@@ -51,7 +56,7 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
                 preprocessed_query = bigram[preprocessed_query]
             if trigrams:
                 preprocessed_query = trigram[preprocessed_query]
-             
+
             vectors = []
             shoulds = []
             for token in preprocessed_query:
