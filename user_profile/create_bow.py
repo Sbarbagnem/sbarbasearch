@@ -95,7 +95,6 @@ if __name__ == "__main__":
             X = tf.fit_transform(user_sentences)
             freqs = zip(tf.get_feature_names(), X.sum(axis=0).tolist()[0])
         freqs = sorted(freqs, key=lambda x: -x[1])
-        print(freqs)
         bow[user] = [freqs[i][0] for i in range(args.top_n)]
         
     opath = os.path.join("data", "users", "bow_tf.json" if args.only_tf else "bow_tfidf.json")
