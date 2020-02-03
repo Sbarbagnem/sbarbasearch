@@ -26,7 +26,7 @@ MAPPING = {
             },
             "filter": {
                 "remove_digit_token": {
-                    "type": "pattern_replace",  # remove token made og only number
+                    "type": "pattern_replace",  # remove token made of only number
                     "pattern": "^[0-9]+",
                     "replacement": "",
                 },
