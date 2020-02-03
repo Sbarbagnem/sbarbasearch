@@ -20,11 +20,15 @@ MAPPING = {
                         "remove_link_token",
                         "remove_puntuaction",
                         "remove_length_less_two",
-                        "porter_stem",
+                        "my_stemmer",
                     ],
                 }
             },
             "filter": {
+                "my_stemmer" : {
+                    "type" : "stemmer",
+                    "name" : "porter2"
+                },
                 "remove_digit_token": {
                     "type": "pattern_replace",  # remove token made of only number
                     "pattern": "^[0-9]+",
