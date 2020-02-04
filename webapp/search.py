@@ -105,9 +105,9 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
     #should.append({"rank_feature": {"field": "popularity.retweet", "boost": 5}})
     #should.append({"rank_feature": {"field": "popularity.like", "boost": 5}})
 
-    should.append(
-        {"distance_feature": {"field": "created_at", "pivot": "5d", "origin": "now", "boost": 5}}
-    )
+    #should.append(
+    #    {"distance_feature": {"field": "created_at", "pivot": "5d", "origin": "now", "boost": 15}}
+    #)
 
     print("SHOULD", should)
 
@@ -120,9 +120,19 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
                     },
                     "functions": [
                         {
+                          "exp": {
+                            "created_at": {
+                              "origin": "now", 
+                              "scale": "10d",
+                              "offset": "5d",
+                              "decay" : 0.6
+                            }
+                          }
+                        },
+                        {
                         "field_value_factor": {
                             "field": "like",
-                            "factor": 1.5,
+                            "factor": 1,
                             "modifier": "sqrt",
                             "missing": 1
                         }
@@ -130,13 +140,13 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
                         {
                         "field_value_factor": {
                             "field": "retweet",
-                            "factor": 1.2,
+                            "factor": 1,
                             "modifier": "sqrt",
                             "missing": 1
                         }
                         }
                     ],
-                    "score_mode": "avg"
+                    "score_mode": "multiply"
                 }
             }
         }

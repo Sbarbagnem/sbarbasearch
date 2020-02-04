@@ -50,7 +50,7 @@ MAPPING = {
     },
     "mappings": {
         "properties": {
-            "created_at": {"type": "date", "index": False},
+            "created_at": {"type": "date"},
             "text": {
                 "type": "text",
                 "analyzer": "custom_analyzer",
