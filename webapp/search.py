@@ -152,7 +152,6 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
         }
     res = client.search(index="index_twitter", body=body)
     res = res["hits"]["hits"]
-    print(res)
     # print('Ho trovato: ', len(res), ' tweet')
 
     if expans:
