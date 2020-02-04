@@ -10,7 +10,6 @@ USERS_LIST = [
     "@elonmusk",
     "@IBM",
     "@BarackObama",
-    "@realDonaldTrump",
     "@BorisJohnson",
     "@Yunus_Centre",
     "@JosephEStiglitz",
@@ -28,7 +27,6 @@ USER_COUNTRY = {
     'Eminem': 'US',
     'BarackObama': 'US',
     'VancityReynolds': 'CA',
-    'realDonaldTrump': 'US',
     'Yunus_Centre': 'BD'
 }
 

@@ -164,6 +164,7 @@ class TweetPreprocess:
     whitespace_trans = str.maketrans(punct, " " * len(punct))
     non_whitespace_trans = str.maketrans("", "", punct)
     stop_words = set(stopwords.words("english"))
+    twitter_words = set("rt", "via", "fav")
     nltk_tokenize = word_tokenize
     twitter_tokenize = TweetTokenizer().tokenize
     lemmatizer = WordNetLemmatizer()
@@ -201,12 +202,10 @@ class TweetPreprocess:
             token = token.lower()
             token = cls.lemmatizer.lemmatize(token)
             if not (
-                token in cls.stop_words
-                or not token.isalnum()
+                not token.isalnum()
+                or token in cls.stop_words
+                or token in cls.twitter_words
                 or (token.isalpha() and len(token) < 2)
-                or token == "rt"
-                or token == "via"
-                or token == "fav"
                 or all(s in "ah" for s in token)
                 or all(s in "lo" for s in token)
             ):
