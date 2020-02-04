@@ -122,7 +122,7 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
                         {
                         "field_value_factor": {
                             "field": "like",
-                            "factor": 1.2,
+                            "factor": 1.5,
                             "modifier": "sqrt",
                             "missing": 1
                         }
@@ -130,7 +130,7 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
                         {
                         "field_value_factor": {
                             "field": "retweet",
-                            "factor": 1.5,
+                            "factor": 1.2,
                             "modifier": "sqrt",
                             "missing": 1
                         }
