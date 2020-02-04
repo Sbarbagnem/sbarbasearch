@@ -25,13 +25,13 @@ args.add_argument(
 args.add_argument(
     "--bigrams-thr",
     help="Threshold for which two words are a bigram",
-    default=0.8,
+    default=0.9,
     type=float,
 )
 args.add_argument(
     "--trigrams-thr",
     help="Threshold for which two words are a trigram",
-    default=0.9,
+    default=0.8,
     type=float,
 )
 args = args.parse_args()
