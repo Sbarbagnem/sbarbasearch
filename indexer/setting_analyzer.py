@@ -50,20 +50,19 @@ MAPPING = {
     },
     "mappings": {
         "properties": {
-            "created_at": {"type": "date", "index": True, "store": True},
+            "created_at": {"type": "date", "index": False},
             "text": {
                 "type": "text",
-                "store": True,
                 "analyzer": "custom_analyzer",
                 "similarity": "my_similarity",
             },
-            "user": {"type": "text", "store": True, "index": False},
-            "like": {"type": "integer", "store": True, "index": True},
-            "retweet": {"type": "integer", "store": True, "index": True},
-            "profile_image": {"type": "keyword", "index": False, "store": True},
-            "tweet_url": {"type": "keyword", "index": False, "store": True},
-            "topic": {"type": "keyword", "index": True, "store": True},
-            "country": {"type": "keyword", "index": True, "store": True},
+            "user": {"type": "text", "index": False},
+            "like": {"type": "integer", "index": False},
+            "retweet": {"type": "integer", "index": False},
+            "profile_image": {"type": "keyword", "index": False},
+            "tweet_url": {"type": "keyword", "index": False},
+            "topic": {"type": "keyword", "index": True},
+            "country": {"type": "keyword", "index": True},
         }
     },
 }
