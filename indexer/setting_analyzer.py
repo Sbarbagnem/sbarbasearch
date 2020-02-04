@@ -61,8 +61,8 @@ MAPPING = {
             "retweet": {"type": "integer", "index": False},
             "profile_image": {"type": "keyword", "index": False},
             "tweet_url": {"type": "keyword", "index": False},
-            "topic": {"type": "keyword", "index": True, "analyzer": "keyword"},
-            "country": {"type": "keyword", "index": True, "analyzer": "keyword"},
+            "topic": {"type": "keyword", "index": True},
+            "country": {"type": "keyword", "index": True},
         }
     },
 }
