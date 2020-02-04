@@ -164,7 +164,7 @@ class TweetPreprocess:
     whitespace_trans = str.maketrans(punct, " " * len(punct))
     non_whitespace_trans = str.maketrans("", "", punct)
     stop_words = set(stopwords.words("english"))
-    twitter_words = set("rt", "via", "fav")
+    twitter_words = set(["rt", "via", "fav"])
     nltk_tokenize = word_tokenize
     twitter_tokenize = TweetTokenizer().tokenize
     lemmatizer = WordNetLemmatizer()
