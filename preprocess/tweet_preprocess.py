@@ -134,7 +134,7 @@ def get_numbers_pattern():
     # return regex.compile(
     #     r"(?<!#\S*)(\d+)"  # only for regex package
     # )  # Match numbers only if they're not hashtags
-    return re.compile(r'\b(\d+)\b')
+    return re.compile(r"\b(\d+)\b")
 
 
 def get_uppercase_pattern():

@@ -25,10 +25,7 @@ MAPPING = {
                 }
             },
             "filter": {
-                "my_stemmer" : {
-                    "type" : "stemmer",
-                    "name" : "porter2"
-                },
+                "my_stemmer": {"type": "stemmer", "name": "porter2"},
                 "remove_digit_token": {
                     "type": "pattern_replace",  # remove token made of only number
                     "pattern": "^[0-9]+",

@@ -102,54 +102,53 @@ def query_search(query, count, user, topic, method, bigrams, trigrams, location_
         should.append({"term": {"country": USER_COUNTRY[user]}})
 
     # aumento rilevanza dei documenti che sono molto popolari (retweet e like)
-    #should.append({"rank_feature": {"field": "popularity.retweet", "boost": 5}})
-    #should.append({"rank_feature": {"field": "popularity.like", "boost": 5}})
+    # should.append({"rank_feature": {"field": "popularity.retweet", "boost": 5}})
+    # should.append({"rank_feature": {"field": "popularity.like", "boost": 5}})
 
-    #should.append(
+    # should.append(
     #    {"distance_feature": {"field": "created_at", "pivot": "5d", "origin": "now", "boost": 15}}
-    #)
+    # )
 
     print("SHOULD", should)
 
     q = {"must": must, "should": should}
-    body = {"size": count, 
-            "query": {
-                "function_score": {
-                    "query": {
-                        "bool": q
-                    },
-                    "functions": [
-                        {
-                          "exp": {
+    body = {
+        "size": count,
+        "query": {
+            "function_score": {
+                "query": {"bool": q},
+                "functions": [
+                    {
+                        "exp": {
                             "created_at": {
-                              "origin": "now", 
-                              "scale": "10d",
-                              "offset": "5d",
-                              "decay" : 0.6
+                                "origin": "now",
+                                "scale": "10d",
+                                "offset": "5d",
+                                "decay": 0.6,
                             }
-                          }
-                        },
-                        {
+                        }
+                    },
+                    {
                         "field_value_factor": {
                             "field": "like",
                             "factor": 1,
                             "modifier": "sqrt",
-                            "missing": 1
+                            "missing": 1,
                         }
-                        },
-                        {
+                    },
+                    {
                         "field_value_factor": {
                             "field": "retweet",
                             "factor": 1,
                             "modifier": "sqrt",
-                            "missing": 1
+                            "missing": 1,
                         }
-                        }
-                    ],
-                    "score_mode": "multiply"
-                }
+                    },
+                ],
+                "score_mode": "multiply",
             }
-        }
+        },
+    }
     res = client.search(index="index_twitter", body=body)
     res = res["hits"]["hits"]
     # print('Ho trovato: ', len(res), ' tweet')

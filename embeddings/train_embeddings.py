@@ -58,7 +58,7 @@ args.add_argument(
 )
 args.add_argument(
     "--init-mode",
-    help='If \"hidden\" (default), initialize temporal models with hidden embeddings of the context; if \"both\", initilize also the word embeddings; if \"copy\", temporal models are initiliazed as a copy of the context model (same vocabulary)',
+    help='If "hidden" (default), initialize temporal models with hidden embeddings of the context; if "both", initilize also the word embeddings; if "copy", temporal models are initiliazed as a copy of the context model (same vocabulary)',
     default="hidden",
     type=str,
 )

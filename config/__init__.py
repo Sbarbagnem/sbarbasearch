@@ -16,18 +16,18 @@ USERS_LIST = [
 ]
 
 USER_COUNTRY = {
-    'AaronDonald97': "US",
-    'BorisJohnson': 'GB',
-    'elonmusk': 'ZA',
-    'EmmaWatson': 'FR',
-    'GreenDay': 'US',
-    'IBM': 'US',
-    'JosephEStiglitz': 'US',
-    'MarcusRashford': 'GB',
-    'Eminem': 'US',
-    'BarackObama': 'US',
-    'VancityReynolds': 'CA',
-    'Yunus_Centre': 'BD'
+    "AaronDonald97": "US",
+    "BorisJohnson": "GB",
+    "elonmusk": "ZA",
+    "EmmaWatson": "FR",
+    "GreenDay": "US",
+    "IBM": "US",
+    "JosephEStiglitz": "US",
+    "MarcusRashford": "GB",
+    "Eminem": "US",
+    "BarackObama": "US",
+    "VancityReynolds": "CA",
+    "Yunus_Centre": "BD",
 }
 
 # app token
