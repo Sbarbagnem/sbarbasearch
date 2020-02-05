@@ -55,5 +55,5 @@ Here are listed all the runnble scripts:
 * `python -m embeddings.train_phraser` trains bigrams and/or trigrams models. Run it with `--help` to see all the available options
 * `python -m indexer.create_index` creates the index used by [Elasticsearch](https://www.elastic.co/) during the search.
 * `python -m preprocess.preprocess` preprocess the query and the users json files. Run it with `--help` to see all the available options
-* `python -m user_profile.create_bow` creates the users profiles fitting a TD-IDF model. Run it with `--help` to see all the available options
+* `python -m user_profile.create_bow` creates the users profiles fitting a TF model. Run it with `--help` to see all the available options
 * `python -m webapp.app` starts the webapp at http://127.0.0.1:5000/
