@@ -57,3 +57,17 @@ Here are listed all the runnble scripts:
 * `python -m preprocess.preprocess` preprocess the query and the users json files. Run it with `--help` to see all the available options
 * `python -m user_profile.create_bow` creates the users profiles fitting a TF model. Run it with `--help` to see all the available options
 * `python -m webapp.app` starts the webapp at http://127.0.0.1:5000/
+
+### Typical workflow
+
+If you want, for example, update users and query tweets, preprocessed them, learn bigram or trigram models and/or a new word embeddings with different parameters, please consider to follow those steps in order:
+
+1. [Optional] `python -m crawl_tweet.crawl_tweet_query` to update the query tweets
+2. [Optional] `python -m crawl_tweet.crawl_tweet_users` to update the users tweets
+3. `python -m preprocess.preprocess` to preprocess the query and the users json files, and save the preprocessed files as list of sentences, where each sentence is a list of tokens. This is needed for both the phrases and the twec model
+4. `python -m embeddings.train_phraser` to learn bigram and/or trigram models
+5. `python -m embeddings.create_twec_data` to create txts needed to train twec
+6. `python -m embeddings.train_embeddings` to train the twec models
+7. `python -m user_profile.create_bow` to update the users profiles fitting a new TF model
+8. `python -m indexer.create_index` to create the index used by [Elasticsearch](https://www.elastic.co/) during the search
+9. `python -m webapp.app` starts the webapp at http://127.0.0.1:5000/
