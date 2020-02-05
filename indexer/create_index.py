@@ -4,6 +4,7 @@ from elasticsearch.helpers import bulk
 from elasticsearch import Elasticsearch
 from indexer.setting_analyzer import MAPPING
 
+
 def index_exist():
     return client.indices.exists(index=NAME_INDEX)
 
@@ -86,7 +87,7 @@ def index_batch(tweets):
             "tweet_url": tweet["tweet_url"],
             "topic": tweet["topic"],
             "like": int(tweet["like"]) + 1,
-            "retweet": int(tweet["retweet"]) + 1,            
+            "retweet": int(tweet["retweet"]) + 1,
             "country": tweet["country"],
         }
         requests.append(request)
