@@ -19,7 +19,7 @@ In order to use this project, one needs to:
 * Download the [data folder](https://drive.google.com/drive/folders/1xKj7u-e2lf5GcJPHhDgBkNyPB70AP4Yv?usp=sharing) and unpack it in the project root: please remember that all the modules refers to the files in the data folder as they are, so do not change their positions or names!  
 This folder contains:
   * A folder named `models` which contains all the word embeddings trained with TWEC and the additional `bigrams.pkl` and `trigrams.pkl` models
-  * A folder named `query`, which contains the `query.json` with 478528 multiple topics (sport, economy, politics, music, cinema, technology) tweets from 01-21-2020 to 02-04-2020, and the `query.pkl` which contains a list of lists with the preprocessed and tokenized tweets
+  * A folder named `query`, which contains the `query.json` with 649727 multiple topics (sport, economy, politics, music, cinema, technology) tweets from 01-21-2020 to 02-04-2020, and the `query.pkl` which contains a list of lists with the preprocessed and tokenized tweets
   * A folder named `twec`, which contains all the .txt files needed to train TWEC
   * A folder named `users`, which contains all the users tweets and their respective preprocessed and tokenized .pkl files
 
